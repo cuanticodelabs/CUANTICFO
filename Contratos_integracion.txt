@@ -1,0 +1,377 @@
+Contratos de integración entre Next.js y n8n — CuantiCFO v1.1
+==============================================================
+Patrón general:
+  Browser → Next.js route (/api/finance/...) → n8n webhook → PostgreSQL
+  Next.js valida sesión antes de llamar a n8n.
+  n8n usa service_role key para Supabase (bypasa RLS).
+  Webhooks protegidos con Header Auth: X-CFO-Secret: <secret>
+
+Base URL n8n: https://n8n.cuanticode.com/webhook/cfo
+
+Convenciones:
+  - periodo: siempre 'YYYY-MM' (ej: '2026-04')
+  - montos: número sin formato (100000, no "$100.000")
+  - empresa_id: UUID inyectado por Next.js desde sesión (nunca desde el cliente)
+
+==============================================================
+FLUJO 1: CREAR INGRESO
+POST /webhook/cfo/create-income
+==============================================================
+Payload:
+{
+  "empresa_id":     "uuid",
+  "fecha_emision":  "2026-04-24",
+  "periodo":        "2026-04",
+  "cliente":        "Empresa ABC SpA",
+  "rut_cliente":    "77.123.456-8",
+  "folio":          "F-1035",
+  "tipo_documento": "factura_afecta",
+  "neto":           2100000,
+  "iva":            399000,
+  "exento":         0,
+  "total":          2499000,
+  "categoria_id":   "uuid-categoria",
+  "estado_cobro":   "pendiente",
+  "proyecto_id":    "uuid-proyecto-o-null",
+  "archivo_url":    "https://storage.../factura.pdf"
+}
+
+Respuesta exitosa (200):
+{
+  "ok":        true,
+  "ingreso_id": "uuid-creado",
+  "message":   "Ingreso registrado correctamente",
+  "alertas":   []
+}
+
+Respuesta error (400/500):
+{
+  "ok":      false,
+  "error":   "DUPLICADO | CAMPO_FALTANTE | ERROR_BD",
+  "message": "Descripción del error",
+  "campo":   "folio"
+}
+
+Pasos internos n8n:
+  1. Validar campos obligatorios (fecha_emision, cliente, tipo_documento, total)
+  2. Verificar empresa_id válida
+  3. Detectar duplicado (folio + rut_cliente + tipo_documento + empresa_id)
+  4. Insertar en tabla ingresos
+  5. Recalcular resumen mensual (tabla impuestos_mensuales)
+  6. Crear alerta si estado_cobro = 'pendiente' y vence en < 7 días
+  7. Registrar en workflow_logs
+  8. Responder al frontend
+
+==============================================================
+FLUJO 2: CREAR GASTO
+POST /webhook/cfo/create-expense
+==============================================================
+Payload:
+{
+  "empresa_id":        "uuid",
+  "fecha_documento":   "2026-04-24",
+  "periodo":           "2026-04",
+  "proveedor":         "Google Cloud",
+  "rut_proveedor":     "00.000.000-0",
+  "folio":             "INV-2026-001",
+  "tipo_documento":    "factura_extranjera",
+  "categoria_id":      "uuid-categoria",
+  "neto":              100000,
+  "iva":               0,
+  "exento":            0,
+  "total":             100000,
+  "usa_credito_fiscal": false,
+  "estado_pago":       "pagado",
+  "tiene_respaldo":    true,
+  "proyecto_id":       "uuid-proyecto-o-null",
+  "archivo_url":       "https://storage.../factura.pdf"
+}
+
+Respuesta exitosa (200):
+{
+  "ok":       true,
+  "gasto_id": "uuid-creado",
+  "message":  "Gasto registrado correctamente",
+  "alertas":  []
+}
+
+Pasos internos n8n:
+  1. Validar campos obligatorios
+  2. Verificar empresa_id válida
+  3. Detectar duplicado (folio + rut_proveedor + tipo_documento + empresa_id)
+  4. Insertar en tabla gastos
+  5. Si tiene_respaldo = false → crear alerta tipo 'gasto_sin_respaldo'
+  6. Recalcular IVA crédito del periodo
+  7. Registrar en workflow_logs
+  8. Responder al frontend
+
+==============================================================
+FLUJO 3: CREAR HONORARIO
+POST /webhook/cfo/create-honorario
+==============================================================
+Payload:
+{
+  "empresa_id":     "uuid",
+  "fecha_emision":  "2026-04-24",
+  "periodo":        "2026-04",
+  "prestador":      "Juan Pérez González",
+  "rut_prestador":  "12.345.678-9",
+  "folio":          "BH-001",
+  "monto_bruto":    500000,
+  "retencion":      53750,
+  "monto_neto":     446250,
+  "estado_pago":    "pagado",
+  "proyecto_id":    "uuid-o-null",
+  "archivo_url":    "https://storage.../boleta.pdf"
+}
+
+Respuesta exitosa (200):
+{
+  "ok":           true,
+  "honorario_id": "uuid-creado",
+  "message":      "Honorario registrado correctamente",
+  "retencion_calculada": 53750
+}
+
+Nota: retencion = monto_bruto * 0.1075 (10.75% SII)
+
+==============================================================
+FLUJO 4: SUBIDA DE DOCUMENTO
+POST /webhook/cfo/upload-document
+Content-Type: multipart/form-data
+==============================================================
+Campos del formulario:
+  empresa_id:    uuid
+  tipo:          "ingreso" | "gasto" | "honorario" | "otro"
+  archivo:       [file binary]
+  nombre:        "factura-google-abril.pdf"
+
+Respuesta exitosa (200):
+{
+  "ok":          true,
+  "archivo_url": "https://supabase.storage/.../factura.pdf",
+  "sugerencias": {
+    "proveedor":      "Google Cloud",
+    "monto_total":    100000,
+    "tipo_documento": "factura_extranjera",
+    "confianza":      0.85
+  },
+  "message": "Documento guardado. Revisa los datos sugeridos."
+}
+
+Pasos internos n8n:
+  1. Guardar archivo en Supabase Storage
+  2. (Opcional MVP) Extraer texto con OCR básico
+  3. Responder con URL y sugerencias (si hay OCR)
+  4. Frontend crea el movimiento con datos pre-llenados para revisión
+
+==============================================================
+FLUJO 5: GENERAR LIBRO CONTABLE
+POST /webhook/cfo/generate-book
+==============================================================
+Payload:
+{
+  "empresa_id": "uuid",
+  "periodo":    "2026-04",
+  "tipo":       "libro_compras" | "libro_ventas" | "libro_honorarios"
+}
+
+Respuesta exitosa (200):
+{
+  "ok":            true,
+  "libro_id":      "uuid",
+  "archivo_url":   "https://storage.../libro-compras-2026-04.xlsx",
+  "resumen": {
+    "total_neto":    8500000,
+    "total_iva":     1615000,
+    "total_general": 10115000,
+    "cantidad_docs": 23
+  }
+}
+
+Pasos internos n8n:
+  1. Consultar tabla correspondiente (gastos / ingresos / honorarios) por empresa + periodo
+  2. Agrupar por tipo_documento
+  3. Calcular totales neto/IVA/exento/total
+  4. Generar archivo Excel
+  5. Guardar en Supabase Storage
+  6. Insertar o actualizar registro en libros_mensuales
+  7. Responder con URL
+
+==============================================================
+FLUJO 6: PREPARADOR F29
+POST /webhook/cfo/prepare-f29
+==============================================================
+Payload:
+{
+  "empresa_id": "uuid",
+  "periodo":    "2026-04"
+}
+
+Respuesta exitosa (200):
+{
+  "ok":     true,
+  "f29_id": "uuid-impuesto-mensual",
+  "resumen": {
+    "periodo":          "2026-04",
+    "iva_debito":       5450000,
+    "iva_credito":      3300000,
+    "iva_a_pagar":      2150000,
+    "remanente_credito": 0,
+    "ppm_base":         25430000,
+    "ppm":              380000,
+    "retenciones":      120000,
+    "total_estimado":   2650000
+  },
+  "observaciones": [
+    "3 facturas de compra sin categoría",
+    "2 honorarios sin declarar retención",
+    "1 documento pendiente de respaldo"
+  ],
+  "estado": "estimado"
+}
+
+Pasos internos n8n:
+  1. Consultar ingresos del periodo → calcular IVA débito
+  2. Consultar gastos con usa_credito_fiscal=true → calcular IVA crédito
+  3. Calcular IVA a pagar (o remanente)
+  4. Consultar honorarios → sumar retenciones no declaradas
+  5. Calcular PPM (ingresos netos * tasa_ppm de empresa)
+  6. Detectar inconsistencias → lista de observaciones
+  7. Upsert en impuestos_mensuales
+  8. Marcar honorarios como retencion_declarada = true (solo si se confirma)
+  9. Responder con resumen completo
+
+==============================================================
+FLUJO 7: EJECUTAR CIERRE MENSUAL
+POST /webhook/cfo/close-period
+==============================================================
+Payload:
+{
+  "empresa_id": "uuid",
+  "periodo":    "2026-04",
+  "cerrado_por": "uuid-usuario"
+}
+
+Respuesta exitosa (200):
+{
+  "ok":      true,
+  "cierre_id": "uuid",
+  "snapshot": {
+    "ingresos":   25430000,
+    "gastos":     13250000,
+    "resultado":  12180000,
+    "iva_pagar":  2150000
+  },
+  "message": "Periodo 2026-04 cerrado correctamente. Ediciones bloqueadas."
+}
+
+Respuesta error (400) — checklist incompleto:
+{
+  "ok":      false,
+  "error":   "CHECKLIST_INCOMPLETO",
+  "message": "No se puede cerrar: faltan 3 pasos",
+  "pendientes": ["banco_conciliado", "f29_preparado", "reporte_generado"]
+}
+
+Pasos internos n8n:
+  1. Verificar que todos los campos boolean del cierre estén en true
+  2. Calcular snapshot financiero del periodo
+  3. Actualizar cierres_mensuales: cerrado=true, snapshot, cerrado_por, cerrado_at
+  4. Generar paquete de respaldo (libros + F29 + estado de resultados)
+  5. Enviar correo resumen al CFO/contador
+  6. Registrar en workflow_logs
+  7. Responder con snapshot
+
+==============================================================
+FLUJO 8: OBTENER KPIs DASHBOARD
+POST /webhook/cfo/dashboard-kpis
+==============================================================
+Payload:
+{
+  "empresa_id": "uuid",
+  "periodo":    "2026-04"
+}
+
+Respuesta exitosa (200):
+{
+  "ok": true,
+  "kpis": {
+    "ingresos_mes":        25430000,
+    "gastos_mes":          13250000,
+    "resultado_operacional": 12180000,
+    "iva_estimado":         2150000,
+    "caja_disponible":      18760000,
+    "cuentas_por_cobrar":   32450000,
+    "cuentas_por_pagar":    9200000,
+    "alertas_pendientes":   5
+  },
+  "evolucion": [
+    { "periodo": "2025-11", "ingresos": 18000000, "gastos": 9500000 },
+    { "periodo": "2025-12", "ingresos": 22000000, "gastos": 11000000 },
+    { "periodo": "2026-01", "ingresos": 19500000, "gastos": 10200000 },
+    { "periodo": "2026-02", "ingresos": 21000000, "gastos": 10800000 },
+    { "periodo": "2026-03", "ingresos": 23500000, "gastos": 12000000 },
+    { "periodo": "2026-04", "ingresos": 25430000, "gastos": 13250000 }
+  ],
+  "distribucion_gastos": [
+    { "categoria": "Servicios",   "monto": 4637500, "porcentaje": 35 },
+    { "categoria": "Personal",    "monto": 3312500, "porcentaje": 25 },
+    { "categoria": "Tecnología",  "monto": 1987500, "porcentaje": 15 }
+  ],
+  "cierre_estado": {
+    "ventas_revisadas": true,
+    "compras_revisadas": true,
+    "banco_conciliado": true,
+    "impuestos_calculados": true,
+    "f29_preparado": true,
+    "reporte_generado": false,
+    "cerrado": false,
+    "completados": 5,
+    "total": 8
+  }
+}
+
+==============================================================
+FLUJO 9: ALERTAS AUTOMÁTICAS (schedule diario)
+Trigger: Schedule (07:00 hora Chile, lunes a viernes)
+No tiene endpoint de llamada directa — corre automáticamente.
+==============================================================
+Reglas evaluadas por empresa activa:
+  - iva_supera_caja:     iva_estimado > caja_disponible
+  - factura_vencida:     ingresos con fecha_pago < hoy y estado_cobro = 'pendiente'
+  - gasto_sin_respaldo:  gastos con tiene_respaldo = false y creados hace > 3 días
+  - mes_sin_cierre:      periodo anterior sin cierres_mensuales.cerrado = true
+  - variacion_gasto:     gasto mes actual > gasto mes anterior * 1.30
+  - categoria_faltante:  gastos o ingresos sin categoria_id
+
+Output: INSERT en tabla alertas, notificación por correo si severidad = 'alta'
+
+Payload de alerta creada:
+{
+  "empresa_id":     "uuid",
+  "periodo":        "2026-04",
+  "tipo":           "iva_supera_caja",
+  "severidad":      "alta",
+  "descripcion":    "IVA estimado $2.150.000 supera caja disponible $1.900.000",
+  "accion_sugerida": "Transferir fondos o verificar cobros pendientes",
+  "referencia_tabla": "impuestos_mensuales",
+  "referencia_id":  "uuid-impuesto"
+}
+
+==============================================================
+FLUJO 10: ERROR HANDLER GLOBAL
+Trigger: Error Trigger de n8n (se activa en cualquier fallo)
+==============================================================
+Acción:
+  1. Capturar workflow_name, execution_id, error_message, error_node
+  2. INSERT en workflow_logs con status = 'error'
+  3. Si severidad alta (ej: fallo en cierre mensual o F29) → enviar email al admin
+  4. Responder al frontend con error genérico si el flujo original era síncrono:
+
+{
+  "ok":      false,
+  "error":   "WORKFLOW_ERROR",
+  "message": "Ocurrió un error procesando la solicitud. El equipo fue notificado.",
+  "log_id":  "uuid-workflow-log"
+}

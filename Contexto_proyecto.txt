@@ -1,0 +1,172 @@
+Sí. Para partir no necesito más datos; puedo avanzar con una planificación base usando supuestos razonables para CuantiCode Labs SpA, pensando en una app web responsive/mobile para uso interno de CFO.
+El enfoque correcto no es construir “otro Nubox completo”, sino una herramienta CFO-first: captura, ordena, calcula, alerta y prepara información tributaria/financiera, pero dejando la presentación final ante SII con revisión humana.
+
+1. Visión del proyecto
+Nombre conceptual
+CuantiCFO o CFO Control Center
+Objetivo
+Crear una aplicación web responsive que permita:
+Centralizar ingresos, gastos, compras, ventas, honorarios y movimientos bancarios.
+Generar libros contables mensuales/anuales.
+Construir estado de resultados, flujo de caja y KPIs.
+Preparar información para declaraciones mensuales en SII, especialmente IVA/F29.
+Automatizar alertas y reportes mediante n8n.
+Reducir trabajo manual y riesgo de errores antes de declarar impuestos.
+
+2. Referentes investigados y aprendizaje clave
+Los referentes más cercanos son Nubox, Defontana, QuickBooks y el propio ecosistema del SII.
+Nubox posiciona su software contable en Chile como una solución para gestionar contabilidad, automatizar procesos, facilitar conciliación y generar reportes rápidamente; además permite manejar múltiples empresas desde una sola plataforma. (Nubox)
+QuickBooks, por su parte, concentra su propuesta en seguimiento automático de ingresos/gastos, facturación, conciliación bancaria, presupuestos, gestión de impuestos y reportes financieros. (QuickBooks)
+Para Chile, el SII indica que el Formulario 29 se usa para declarar y pagar impuestos mensuales como IVA, PPM y retenciones. (Servicio de Impuestos Internos) También tiene una guía oficial para declarar F29 por internet desde el menú de Impuestos Mensuales. (Servicio de Impuestos Internos)
+Además, el SII dispone de herramientas asociadas a libros de compra y venta, incluyendo importador, estructuras, resúmenes y periodos sin movimiento. (Servicio de Impuestos Internos)
+
+3. El 20% de funciones que daría el 80% del valor
+Para tu caso, estas son las funciones que realmente moverían la aguja:
+1. Dashboard financiero mensual
+Debe mostrar:
+Ventas del mes.
+Gastos del mes.
+Resultado operacional.
+IVA débito.
+IVA crédito.
+IVA a pagar estimado.
+PPM estimado.
+Caja disponible.
+Cuentas por cobrar.
+Cuentas por pagar.
+Alertas tributarias.
+Este dashboard es el corazón de la app.
+
+2. Registro inteligente de ingresos y gastos
+Módulos mínimos:
+Ingresos por factura emitida.
+Gastos con factura recibida.
+Boletas de honorarios.
+Gastos sin documento tributario.
+Pagos bancarios.
+Clasificación por categoría contable.
+Asociación a centro de costo/proyecto.
+Esto alimenta todo: libros, reportes, impuestos y KPIs.
+
+3. Libro de compras y libro de ventas
+Aunque el SII ya tiene Registro de Compras y Ventas, la app debe permitir generar un libro interno de control, no necesariamente reemplazar el registro oficial.
+Debe permitir:
+Libro de ventas mensual.
+Libro de compras mensual.
+Resumen por proveedor/cliente.
+Neto, IVA, exento, total.
+Estado: validado, pendiente, observado.
+Exportación Excel/CSV/PDF.
+
+4. Preparador de F29
+No intentaría en la primera versión declarar automáticamente en SII. Eso es riesgoso.
+La app debería preparar una vista tipo:
+Concepto
+Monto estimado
+IVA débito fiscal
+$X
+IVA crédito fiscal
+$X
+IVA determinado
+$X
+PPM
+$X
+Retenciones honorarios
+$X
+Total estimado a pagar
+$X
+
+Y además mostrar:
+Diferencias detectadas.
+Documentos sin clasificación.
+Facturas sin validar.
+Gastos sin respaldo.
+Meses pendientes.
+Checklist de declaración.
+
+5. Estado de resultados automático
+Debe generarse por:
+Mes.
+Trimestre.
+Año.
+Proyecto.
+Cliente.
+Línea de negocio.
+Estructura inicial:
+Ingresos operacionales
+(-) Costos directos
+= Margen bruto
+
+(-) Gastos administrativos
+(-) Gastos comerciales
+(-) Gastos tecnológicos
+= Resultado operacional
+
+(-/+) Otros egresos/ingresos
+= Resultado antes de impuestos
+
+
+6. Alertas CFO
+Automáticas y accionables:
+“IVA estimado supera caja disponible”.
+“Hay facturas de compra sin clasificar”.
+“Faltan documentos para cierre mensual”.
+“Cliente con factura vencida”.
+“Gasto tecnológico subió más de X%”.
+“Margen del proyecto está bajo el mínimo”.
+“Faltan datos para preparar F29”.
+“Mes listo para revisión contable”.
+
+7. Cierre mensual guiado
+Un flujo paso a paso:
+Revisar ventas.
+Revisar compras.
+Clasificar gastos.
+Conciliar banco.
+Revisar honorarios.
+Calcular IVA/PPM.
+Generar reportes.
+Marcar mes como cerrado.
+Esto es clave porque transforma la app en un asistente operativo, no solo en una base de datos.
+
+4. Arquitectura general propuesta
+Separación clara
+Frontend Next.js
+    |
+    | HTTPS / Webhooks / API Gateway
+    v
+Backend n8n
+    |
+    | PostgreSQL / Supabase
+    v
+Base de datos financiera
+    |
+    | Reportes / Correos / Integraciones / SII manual-asistido
+    v
+Automatizaciones CFO
+
+Recomendación técnica
+Aunque mencionas backend en n8n, yo usaría esta separación:
+Capa
+Tecnología
+Responsabilidad
+Frontend
+Next.js
+UI, formularios, dashboard, visualización
+Automatización
+n8n
+Flujos, ETL, alertas, reportes, integraciones
+Base de datos
+Supabase/Postgres
+Fuente única de datos
+Auth
+Supabase Auth o NextAuth
+Usuarios y permisos
+Storage
+Supabase Storage
+PDFs, XML, respaldos
+IA opcional
+OpenAI/Claude vía n8n
+Clasificación, resumen, detección de anomalías
+
+n8n puede integrarse con Webhook y Postgres para automatizar transferencia de datos y flujos ETL. (n8n) Además, sus webhooks soportan métodos de autenticación como Basic Auth, Header Auth y JWT, lo que sirve para proteger endpoints llamados desde Next.js. (n8n Docs)

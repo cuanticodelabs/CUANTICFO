@@ -1,0 +1,369 @@
+Modelo de datos CuantiCFO — v1.2 (2026-04-25)
+Sincronizado con bd_esquema.sql v1.2
+Convenciones: montos en NUMERIC(18,2), periodo en formato 'YYYY-MM', UUIDs con gen_random_uuid()
+
+==============================================================
+1. EMPRESAS
+==============================================================
+empresas (
+  id                    uuid PRIMARY KEY,
+  razon_social          text NOT NULL,
+  rut                   text NOT NULL UNIQUE,
+  giro                  text,
+  regimen_tributario    text  -- 'primera_categoria' | 'regimen_pro_pyme' | ...
+  tasa_ppm              numeric(5,4) DEFAULT 0,   -- ej: 0.0125 = 1.25%
+  email_contador        text,
+  banco_principal       text,
+  fecha_inicio_actividades date,
+  activa                boolean DEFAULT true,
+  created_at            timestamptz,
+  updated_at            timestamptz
+)
+
+==============================================================
+2. USUARIOS
+==============================================================
+usuarios (
+  id            uuid PRIMARY KEY,
+  empresa_id    uuid FK → empresas,
+  auth_user_id  uuid UNIQUE,   -- referencia a Supabase Auth (auth.users)
+  nombre        text NOT NULL,
+  email         text NOT NULL UNIQUE,
+  rol           text  -- 'admin' | 'cfo' | 'contador' | 'socio_lectura'
+  activo        boolean DEFAULT true,
+  created_at    timestamptz,
+  updated_at    timestamptz
+)
+
+Roles:
+  admin         → acceso total
+  cfo           → operaciones financieras completas
+  contador      → lectura + libros + exportaciones
+  socio_lectura → solo reportes y dashboard
+
+Limitación MVP: 1 usuario = 1 empresa.
+Fase 2: migrar a tabla empresa_usuarios para multiempresa real.
+
+==============================================================
+3. CATEGORIAS CONTABLES
+==============================================================
+categorias_contables (
+  id               uuid PRIMARY KEY,
+  empresa_id       uuid FK → empresas,
+  nombre           text NOT NULL,
+  tipo             text  -- 'ingreso' | 'costo_directo' | 'gasto_administrativo' |
+                         -- 'gasto_comercial' | 'gasto_tecnologico' | 'gasto_financiero' |
+                         -- 'otro_ingreso' | 'otro_egreso'
+  cuenta_contable  text,   -- Código plan de cuentas (ej: '5.2.03')
+  afecta_resultado boolean DEFAULT true,
+  afecta_iva       boolean DEFAULT false,
+  activa           boolean DEFAULT true,
+  created_at       timestamptz,
+  UNIQUE (empresa_id, nombre)
+)
+
+Nota: categoria_id es UUID, nunca texto libre. Todos los formularios de ingresos/gastos
+deben usar un selector que cargue esta tabla y envíe el UUID.
+
+==============================================================
+4. PROYECTOS / CENTROS DE COSTO
+==============================================================
+proyectos (
+  id          uuid PRIMARY KEY,
+  empresa_id  uuid FK → empresas,
+  nombre      text NOT NULL,
+  codigo      text,
+  descripcion text,
+  cliente     text,
+  estado      text  -- 'activo' | 'cerrado' | 'pausado'
+  fecha_inicio date,
+  fecha_fin    date,
+  created_at   timestamptz,
+  updated_at   timestamptz,
+  UNIQUE (empresa_id, nombre)
+)
+
+Uso: proyecto_id es FK opcional en ingresos, gastos y honorarios.
+Permite segmentar el estado de resultados por proyecto/iniciativa.
+
+==============================================================
+5. HONORARIOS
+==============================================================
+honorarios (
+  id                  uuid PRIMARY KEY,
+  empresa_id          uuid FK → empresas,
+  fecha_emision       date NOT NULL,
+  periodo             text NOT NULL,   -- 'YYYY-MM' con constraint
+  prestador           text NOT NULL,
+  rut_prestador       text NOT NULL,
+  folio               text,
+  monto_bruto         numeric(18,2),
+  retencion           numeric(18,2),   -- 10.75% del bruto (SII Chile)
+  monto_neto          numeric(18,2),   -- monto_bruto - retencion
+  estado_pago         text  -- 'pendiente' | 'pagado' | 'anulado'
+  retencion_declarada boolean DEFAULT false,  -- True si se incluyó en F29
+  proyecto_id         uuid FK → proyectos (nullable),
+  archivo_url         text,
+  creado_por          uuid FK → usuarios (nullable),
+  created_at          timestamptz,
+  updated_at          timestamptz
+)
+
+Fuente para F29: retenciones = SUM(retencion) WHERE retencion_declarada = false
+
+==============================================================
+6. TRANSFERENCIAS BANCARIAS
+==============================================================
+transferencias_bancarias (
+  id              uuid PRIMARY KEY,
+  empresa_id      uuid FK → empresas,
+  fecha           date NOT NULL,
+  periodo         text NOT NULL,   -- 'YYYY-MM'
+  tipo            text  -- 'entrada' | 'salida' | 'traspaso_interno'
+  descripcion     text NOT NULL,
+  monto           numeric(18,2) NOT NULL CHECK > 0,
+  cuenta_origen   text,   -- texto libre en MVP (Fase 2: FK a cuentas_bancarias)
+  cuenta_destino  text,
+  ingreso_id      uuid FK → ingresos (nullable),
+  gasto_id        uuid FK → gastos (nullable),
+  conciliado      boolean DEFAULT false,
+  archivo_url     text,
+  creado_por      uuid FK → usuarios (nullable),
+  created_at      timestamptz,
+  updated_at      timestamptz
+)
+
+Uso: base para conciliación bancaria en el checklist de cierre mensual.
+
+==============================================================
+7. INGRESOS
+==============================================================
+ingresos (
+  id               uuid PRIMARY KEY,
+  empresa_id       uuid FK → empresas,
+  fecha_emision    date NOT NULL,
+  fecha_pago       date,
+  periodo          text NOT NULL,   -- 'YYYY-MM' con constraint
+  cliente          text NOT NULL,
+  rut_cliente      text,
+  folio            text,
+  tipo_documento   text  -- 'factura_afecta' | 'factura_exenta' | 'boleta' |
+                         -- 'nota_debito' | 'nota_credito' | 'boleta_honorarios' |
+                         -- 'liquidacion' | 'otro'
+  neto             numeric(18,2),
+  iva              numeric(18,2),
+  exento           numeric(18,2),
+  total            numeric(18,2),
+  categoria_id     uuid FK → categorias_contables (nullable),
+  estado_cobro     text  -- 'pendiente' | 'cobrado' | 'vencido' | 'anulado'
+  proyecto_id      uuid FK → proyectos (nullable),
+  archivo_url      text,
+  creado_por       uuid FK → usuarios (nullable),
+  created_at       timestamptz,
+  updated_at       timestamptz,
+  UNIQUE (empresa_id, folio, rut_cliente, tipo_documento)  -- previene duplicados DTE
+)
+
+Fuente IVA débito F29: SUM(iva) WHERE tipo_documento IN ('factura_afecta', 'nota_debito')
+
+==============================================================
+8. GASTOS
+==============================================================
+gastos (
+  id                  uuid PRIMARY KEY,
+  empresa_id          uuid FK → empresas,
+  fecha_documento     date NOT NULL,
+  fecha_pago          date,
+  periodo             text NOT NULL,   -- 'YYYY-MM' con constraint
+  proveedor           text NOT NULL,
+  rut_proveedor       text,
+  folio               text,
+  tipo_documento      text  -- 'factura_afecta' | 'factura_extranjera' |
+                            -- 'gasto_sin_documento' | etc.
+  categoria_id        uuid FK → categorias_contables (nullable),
+  neto                numeric(18,2),
+  iva                 numeric(18,2),
+  exento              numeric(18,2),
+  total               numeric(18,2),
+  usa_credito_fiscal  boolean DEFAULT false,
+  estado_pago         text  -- 'pendiente' | 'pagado' | 'vencido' | 'anulado'
+  tiene_respaldo      boolean DEFAULT false,   -- alerta si false después de N días
+  proyecto_id         uuid FK → proyectos (nullable),
+  archivo_url         text,
+  creado_por          uuid FK → usuarios (nullable),
+  created_at          timestamptz,
+  updated_at          timestamptz,
+  UNIQUE (empresa_id, folio, rut_proveedor, tipo_documento)
+)
+
+Fuente IVA crédito F29: SUM(iva) WHERE usa_credito_fiscal = true
+
+==============================================================
+9. LIBROS MENSUALES (snapshots)
+==============================================================
+libros_mensuales (
+  id            uuid PRIMARY KEY,
+  empresa_id    uuid FK → empresas,
+  periodo       text NOT NULL,   -- 'YYYY-MM'
+  tipo          text  -- 'libro_compras' | 'libro_ventas' |
+                      -- 'libro_honorarios' | 'libro_gastos_internos'
+  total_neto    numeric(18,2),
+  total_iva     numeric(18,2),
+  total_exento  numeric(18,2),
+  total_general numeric(18,2),
+  estado        text  -- 'borrador' | 'generado' | 'revisado' | 'enviado'
+  archivo_url   text,   -- URL del Excel/PDF generado por n8n
+  generado_at   timestamptz,
+  generado_por  uuid FK → usuarios (nullable),
+  created_at    timestamptz,
+  updated_at    timestamptz,
+  UNIQUE (empresa_id, periodo, tipo)
+)
+
+Nota: NO reemplaza el RCV del SII. Es control interno de la empresa.
+
+==============================================================
+10. IMPUESTOS MENSUALES (base F29)
+==============================================================
+impuestos_mensuales (
+  id                  uuid PRIMARY KEY,
+  empresa_id          uuid FK → empresas,
+  periodo             text NOT NULL,   -- 'YYYY-MM'
+  -- IVA
+  iva_debito          numeric(18,2),   -- SUM(iva) de ingresos afectos
+  iva_credito         numeric(18,2),   -- SUM(iva) de gastos con crédito fiscal
+  iva_a_pagar         numeric(18,2),   -- MAX(0, iva_debito - iva_credito)
+  remanente_credito   numeric(18,2),   -- MAX(0, iva_credito - iva_debito)
+  -- PPM
+  ppm_base            numeric(18,2),   -- ingresos netos del periodo
+  ppm                 numeric(18,2),   -- ppm_base * tasa_ppm de empresa
+  -- Retenciones
+  retenciones         numeric(18,2),   -- SUM(retencion) de honorarios no declarados
+  -- Total
+  total_estimado      numeric(18,2),   -- iva_a_pagar + ppm + retenciones
+  -- Estado
+  estado              text  -- 'estimado' | 'revisado' | 'declarado' | 'pagado'
+  observaciones       text,
+  comprobante_url     text,   -- Comprobante SII cargado manualmente por el usuario
+  calculado_at        timestamptz,
+  calculado_por       uuid FK → usuarios (nullable),
+  declarado_at        timestamptz,
+  created_at          timestamptz,
+  updated_at          timestamptz,
+  UNIQUE (empresa_id, periodo)
+)
+
+IMPORTANTE: esta tabla se actualiza por el workflow n8n "Preparador F29".
+La app NUNCA declara en SII automáticamente. El usuario marca manualmente.
+
+==============================================================
+11. FLUJO DE CAJA
+==============================================================
+flujo_caja (
+  id                      uuid PRIMARY KEY,
+  empresa_id              uuid FK → empresas,
+  periodo                 text NOT NULL,   -- 'YYYY-MM'
+  saldo_inicial           numeric(18,2),
+  ingresos_reales         numeric(18,2),
+  egresos_reales          numeric(18,2),
+  saldo_final             numeric(18,2),
+  cuentas_por_cobrar      numeric(18,2),
+  cuentas_por_pagar       numeric(18,2),
+  saldo_proyectado_30d    numeric(18,2),
+  saldo_proyectado_60d    numeric(18,2),
+  saldo_proyectado_90d    numeric(18,2),
+  escenario               text  -- 'conservador' | 'base' | 'optimista'
+  notas                   text,
+  created_at              timestamptz,
+  updated_at              timestamptz,
+  UNIQUE (empresa_id, periodo, escenario)
+)
+
+==============================================================
+12. ALERTAS
+==============================================================
+alertas (
+  id                uuid PRIMARY KEY,
+  empresa_id        uuid FK → empresas,
+  periodo           text,   -- 'YYYY-MM' si aplica
+  tipo              text    -- 'iva_supera_caja' | 'factura_vencida' |
+                            -- 'gasto_sin_respaldo' | 'documento_duplicado' |
+                            -- 'proveedor_nuevo' | 'mes_sin_cierre' |
+                            -- 'variacion_gasto' | 'margen_bajo' |
+                            -- 'datos_faltantes_f29' | 'categoria_faltante' |
+                            -- 'honorarios_pendiente' | 'otro'
+  severidad         text  -- 'alta' | 'media' | 'baja'
+  descripcion       text NOT NULL,
+  accion_sugerida   text,
+  estado            text  -- 'pendiente' | 'vista' | 'resuelta' | 'ignorada'
+  referencia_tabla  text,   -- Nombre de tabla origen (ej: 'gastos')
+  referencia_id     uuid,   -- ID del registro relacionado
+  resuelta_por      uuid FK → usuarios (nullable),
+  resuelta_at       timestamptz,
+  created_at        timestamptz,
+  updated_at        timestamptz
+)
+
+==============================================================
+13. CIERRES MENSUALES
+==============================================================
+cierres_mensuales (
+  id                    uuid PRIMARY KEY,
+  empresa_id            uuid FK → empresas,
+  periodo               text NOT NULL,   -- 'YYYY-MM'
+  -- Checklist (mapea 1:1 con el UI del diseño)
+  ventas_revisadas      boolean DEFAULT false,
+  compras_revisadas     boolean DEFAULT false,
+  honorarios_revisados  boolean DEFAULT false,
+  banco_conciliado      boolean DEFAULT false,
+  impuestos_calculados  boolean DEFAULT false,
+  f29_preparado         boolean DEFAULT false,
+  reporte_generado      boolean DEFAULT false,
+  -- Estado
+  cerrado               boolean DEFAULT false,
+  cerrado_por           uuid FK → usuarios (nullable),
+  cerrado_at            timestamptz,
+  -- Snapshot financiero al cierre (inmutable)
+  snapshot_ingresos     numeric(18,2),
+  snapshot_gastos       numeric(18,2),
+  snapshot_resultado    numeric(18,2),
+  snapshot_iva_pagar    numeric(18,2),
+  notas_cierre          text,
+  created_at            timestamptz,
+  updated_at            timestamptz,
+  UNIQUE (empresa_id, periodo)
+)
+
+Regla: cerrado=true bloquea edición de ingresos/gastos del periodo.
+Ajustes posteriores requieren registro con trazabilidad (creado_por + notas).
+
+==============================================================
+14. WORKFLOW LOGS (trazabilidad n8n)
+==============================================================
+workflow_logs (
+  id             uuid PRIMARY KEY,
+  empresa_id     uuid FK → empresas (nullable),
+  workflow_name  text NOT NULL,
+  execution_id   text,     -- ID de ejecución en n8n
+  status         text  -- 'success' | 'error' | 'warning' | 'running'
+  trigger_type   text,     -- 'webhook' | 'schedule' | 'manual'
+  periodo        text,     -- Si el workflow opera sobre un periodo
+  error_message  text,
+  error_node     text,     -- Nodo n8n donde ocurrió el error
+  payload        jsonb,    -- Input recibido
+  result         jsonb,    -- Output producido
+  started_at     timestamptz,
+  finished_at    timestamptz,
+  duration_ms    integer,
+  created_at     timestamptz
+)
+
+Política: nunca borrar registros de logs. Retención mínima 2 años.
+
+==============================================================
+TABLAS PLANIFICADAS PARA FASE 2
+==============================================================
+cuentas_bancarias    -- Saldos por cuenta bancaria (widget en diseño PC)
+empresa_usuarios     -- Membresía de usuario en múltiples empresas
+presupuestos         -- Base para comparativo "real vs presupuesto"
+documentos           -- Repositorio central de archivos (si se separa de cada entidad)

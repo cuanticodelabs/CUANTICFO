@@ -1,0 +1,292 @@
+ Planeación del Frontend en Next.js
+Next.js con App Router es adecuado para estructurar layouts, rutas, componentes server/client y navegación moderna. (Next.js) Además, las Server Actions permiten manejar mutaciones y formularios desde el servidor, aunque para este proyecto convendría usarlas con criterio y no reemplazar todos los webhooks de n8n. (Next.js)
+5.1 Objetivo del frontend
+Ser la interfaz móvil/desktop para:
+Registrar movimientos.
+Revisar documentos.
+Ver KPIs.
+Ejecutar cierres.
+Descargar reportes.
+Enviar procesos a n8n.
+
+5.2 Módulos del frontend
+A. Login y selección de empresa
+Pensado para que en el futuro pueda manejar más de una sociedad.
+Pantallas:
+Login.
+Selección de empresa.
+Perfil tributario.
+Configuración inicial.
+Datos de empresa:
+Razón social
+RUT
+Giro
+Régimen tributario
+Tasa PPM
+Correo contador
+Banco principal
+Fecha de inicio de actividades
+
+
+B. Dashboard principal CFO
+Primera pantalla después del login.
+Cards principales:
+Ingresos del mes
+Gastos del mes
+Resultado estimado
+IVA estimado
+Caja disponible
+Facturas por cobrar
+Facturas por pagar
+Alertas abiertas
+
+Gráficos:
+Ingresos vs gastos últimos 6 meses.
+Resultado mensual.
+IVA débito vs IVA crédito.
+Distribución de gastos por categoría.
+Flujo de caja proyectado.
+
+C. Módulo de ingresos
+Funciones:
+Crear ingreso manual.
+Importar factura emitida.
+Asociar ingreso a cliente.
+Asociar ingreso a proyecto.
+Marcar como cobrado/no cobrado.
+Adjuntar PDF/XML/comprobante.
+Ver historial por cliente.
+Campos mínimos:
+fecha_emision
+fecha_pago
+cliente
+rut_cliente
+folio
+tipo_documento
+neto
+iva
+exento
+total
+estado_cobro
+proyecto_id
+archivo_url
+
+
+D. Módulo de gastos/compras
+Funciones:
+Crear gasto.
+Subir factura/boleta/comprobante.
+Clasificar categoría.
+Asociar proveedor.
+Asociar centro de costo.
+Marcar si da derecho a crédito fiscal.
+Marcar si está pagado.
+Detectar gasto duplicado.
+Campos mínimos:
+fecha_documento
+proveedor
+rut_proveedor
+folio
+tipo_documento
+categoria
+neto
+iva
+exento
+total
+usa_credito_fiscal
+estado_pago
+proyecto_id
+archivo_url
+
+
+E. Módulo de libros contables
+Pantallas:
+Libro de compras.
+Libro de ventas.
+Libro de honorarios.
+Libro de gastos internos.
+Exportaciones.
+Filtros:
+Año
+Mes
+Proveedor
+Cliente
+Tipo documento
+Estado
+
+Acciones:
+Exportar Excel.
+Exportar PDF.
+Enviar por correo.
+Marcar como revisado.
+Bloquear periodo cerrado.
+
+F. Módulo F29 / impuestos
+Pantalla tipo “predeclaración”.
+Secciones:
+IVA ventas
+IVA compras
+IVA determinado
+PPM
+Retenciones
+Remanentes
+Total estimado
+Observaciones
+Checklist SII
+
+Botones:
+Generar resumen F29.
+Descargar respaldo.
+Enviar al contador.
+Marcar como declarado.
+Adjuntar comprobante SII.
+Importante: la app no debe afirmar “declaración enviada” salvo que efectivamente exista integración oficial o comprobante cargado.
+
+G. Estado de resultados
+Vistas:
+Mensual.
+Acumulado anual.
+Comparativo contra presupuesto.
+Por proyecto.
+Por cliente.
+Indicadores:
+Ingresos
+Costos directos
+Margen bruto
+Gastos fijos
+EBITDA aproximado
+Resultado neto estimado
+
+
+H. Flujo de caja
+Funciones:
+Caja actual.
+Cuentas por cobrar.
+Cuentas por pagar.
+Proyección 30/60/90 días.
+Escenarios: conservador, base, optimista.
+
+I. Centro de alertas
+Pantalla con alertas abiertas:
+Tipo
+Severidad
+Periodo
+Descripción
+Acción sugerida
+Estado
+Responsable
+
+Ejemplos:
+Alta: “IVA estimado $850.000 y caja disponible $500.000”.
+Media: “3 facturas de compra sin categoría”.
+Baja: “Falta subir comprobante de pago de proveedor”.
+
+J. Cierre mensual
+Pantalla tipo checklist:
+[ ] Ventas revisadas
+[ ] Compras revisadas
+[ ] Honorarios revisados
+[ ] Banco conciliado
+[ ] IVA calculado
+[ ] F29 preparado
+[ ] Reporte enviado
+[ ] Mes cerrado
+
+Cuando el mes se cierra:
+Se bloquean ediciones críticas.
+Se permite ajuste con trazabilidad.
+Se genera snapshot financiero.
+
+5.3 Estructura de rutas Next.js
+-- ACTUALIZADO v1.1 (2026-04-25): rutas añadidas según diseño y bd_esquema.sql v1.2 --
+
+/app
+  /login
+  /dashboard
+
+  -- MOVIMIENTOS
+  /ingresos
+    /[id]          -- Detalle / edición de ingreso
+    /nuevo         -- Formulario crear ingreso
+  /gastos
+    /[id]
+    /nuevo
+  /honorarios      -- NUEVO: Boletas de honorarios recibidas
+    /[id]
+    /nuevo
+  /transferencias  -- NUEVO: Movimientos bancarios para conciliación
+    /[id]
+    /nuevo
+  /documentos      -- NUEVO: Repositorio central de archivos adjuntos
+
+  -- CONTABILIDAD
+  /libros
+    /compras       -- Libro de compras mensual
+    /ventas        -- Libro de ventas mensual
+    /honorarios    -- Libro de honorarios mensual
+  /cuentas-contables  -- NUEVO: Gestión del plan de cuentas / categorías
+
+  -- IMPUESTOS
+  /impuestos
+    /f29           -- Preparador F29 (predeclaración asistida)
+    /historial     -- RENOMBRADO (era /resumen-mensual): histórico de impuestos_mensuales
+
+  -- REPORTES
+  /reportes
+    /estado-resultados
+    /flujo-caja
+    /kpis
+
+  -- OPERACIONES
+  /cierres
+    /mensual       -- Checklist de cierre mensual guiado
+  /alertas         -- Centro de alertas CFO
+
+  -- CONFIGURACIÓN
+  /configuracion
+    /empresas      -- Datos de empresa(s)
+    /usuarios      -- Gestión de usuarios y roles
+    /categorias    -- Categorías contables (tipos y plan de cuentas)
+    /proyectos     -- NUEVO: Gestión de proyectos / centros de costo
+
+
+5.4 Componentes principales
+-- Existentes (sin cambio) --
+FinancialCard
+KpiCard
+MonthSelector
+CompanySelector
+DocumentUpload
+TransactionTable
+TaxSummaryCard
+AlertBadge
+ClosePeriodChecklist
+ExportButton
+MobileBottomNav
+-- Nuevos requeridos --
+HonorarioForm        -- Formulario de boleta de honorarios (calcula retención automática)
+TransferenciasTable  -- Tabla de movimientos bancarios con estado de conciliación
+ProjectSelector      -- Selector de proyecto/centro de costo (dropdown reutilizable)
+CategorySelector     -- Selector de categoría contable (carga desde BD, devuelve UUID)
+F29SummaryCard       -- Resumen predeclaración F29 con observaciones
+PeriodLockBanner     -- Banner que indica si el periodo está cerrado (bloquea edición)
+
+
+5.5 Diseño responsive/mobile
+Para celular, priorizaría navegación inferior:
+Inicio | Movimientos | Impuestos | Reportes | Más
+
+Pantallas móviles críticas:
+Dashboard resumido.
+Crear gasto rápido (con CategorySelector y ProjectSelector).
+Subir documento (con OCR sugerido en Fase 3).
+Ver IVA estimado.
+Revisar alertas.
+Cierre mensual (checklist).
+Crear honorario rápido (retención calculada automáticamente al ingresar monto bruto).
+
+Nota de diseño:
+  - Módulo "Libros contables" con tablas densas → mostrar versión resumida en móvil
+    y tabla completa en desktop (usar responsive table con scroll horizontal en mobile).
+  - "Transferencias bancarias" en móvil → lista agrupada por fecha, sin columnas extra.
+

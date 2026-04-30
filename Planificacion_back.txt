@@ -1,0 +1,122 @@
+6. Planeación del Backend en n8n
+6.1 Rol de n8n
+n8n no debería ser solo “backend CRUD”. Su valor está en:
+Orquestar procesos.
+Ejecutar automatizaciones.
+Conectar servicios.
+Generar reportes.
+Enviar correos.
+Procesar documentos.
+Crear alertas.
+Ejecutar jobs programados.
+
+6.2 Flujos principales en n8n
+Flujo 1: Crear ingreso
+Trigger:
+Webhook desde Next.js
+
+Pasos:
+1. Recibir payload
+2. Validar campos obligatorios
+3. Verificar empresa
+4. Verificar duplicado por folio + RUT + tipo_documento
+5. Insertar en tabla ingresos
+6. Recalcular resumen mensual
+7. Responder al frontend
+
+
+Flujo 2: Crear gasto
+Webhook Next.js
+→ Validar datos
+→ Clasificar categoría
+→ Verificar si usa crédito fiscal
+→ Detectar duplicado
+→ Insertar gasto
+→ Actualizar resumen mensual
+→ Crear alerta si falta respaldo
+
+
+Flujo 3: Subida de documento
+Webhook archivo/documento
+→ Guardar archivo en storage
+→ Extraer datos con OCR/IA si aplica
+→ Proponer categoría
+→ Proponer proveedor/cliente
+→ Crear movimiento en estado "pendiente revisión"
+→ Notificar al usuario
+
+
+Flujo 4: Generación de libro de compras
+Schedule o Webhook
+→ Consultar gastos del periodo
+→ Agrupar por tipo documento
+→ Calcular neto/IVA/total
+→ Generar Excel/PDF
+→ Guardar archivo
+→ Responder URL al frontend
+
+
+Flujo 5: Generación de libro de ventas
+Consultar ingresos del periodo
+→ Agrupar documentos emitidos
+→ Calcular IVA débito
+→ Generar resumen
+→ Crear exportable
+
+
+Flujo 6: Preparador F29
+Webhook periodo
+→ Consultar ventas
+→ Consultar compras
+→ Consultar honorarios
+→ Calcular IVA débito
+→ Calcular IVA crédito
+→ Calcular PPM
+→ Calcular retenciones
+→ Detectar inconsistencias
+→ Crear resumen impuesto mensual
+→ Responder al frontend
+
+
+Flujo 7: Reporte mensual CFO
+Schedule mensual
+→ Consultar resumen financiero
+→ Generar HTML
+→ Generar PDF
+→ Enviar correo al CFO/socios/contador
+→ Guardar histórico
+
+
+Flujo 8: Alertas automáticas
+Schedule diario
+→ Revisar reglas de negocio
+→ Crear alertas
+→ Enviar correo/WhatsApp/Slack si aplica
+
+Reglas:
+IVA > caja disponible
+Factura vencida
+Gasto sin respaldo
+Documento duplicado
+Proveedor nuevo
+Mes sin cierre
+Variación de gasto > 30%
+
+
+Flujo 9: Cierre mensual
+Webhook desde Next.js
+→ Validar checklist
+→ Revisar documentos pendientes
+→ Crear snapshot mensual
+→ Bloquear periodo
+→ Generar paquete de respaldo
+→ Enviar reporte
+
+
+Flujo 10: Error handler global
+n8n recomienda trabajar con flujos específicos de manejo de errores; existen patrones donde un flujo registra errores en Postgres y luego se pueden agregar alertas por correo o notificación. (n8n)
+Para este proyecto:
+Error Trigger
+→ Guardar error en tabla workflow_logs
+→ Notificar si severidad alta
+→ Crear alerta interna
