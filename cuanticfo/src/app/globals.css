@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Brand Colors */
+  --color-sidebar: #0f1729;
+  --color-sidebar-hover: #1e2d4a;
+  --color-sidebar-active: #2563eb;
+  --color-accent: #2563eb;
+  --color-accent-light: #eff6ff;
+
+  /* Semantic Colors */
+  --color-income: #16a34a;
+  --color-income-light: #f0fdf4;
+  --color-expense: #dc2626;
+  --color-expense-light: #fef2f2;
+  --color-alert-high: #dc2626;
+  --color-alert-medium: #ea580c;
+  --color-alert-low: #2563eb;
+  --color-warning: #d97706;
+  --color-warning-light: #fffbeb;
+
+  /* Neutral */
+  --color-app-bg: #f1f5f9;
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+
+  /* Font */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* Reset & Base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Utility classes */
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.card-hover {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #0f1729;
+  color: #ffffff;
+}
+
+/* Badge colors */
+.badge-green {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+.badge-red {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+.badge-orange {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+.badge-blue {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+.badge-gray {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+/* Number formatting */
+.amount-positive {
+  color: #16a34a;
+  font-weight: 600;
+}
+.amount-negative {
+  color: #dc2626;
+  font-weight: 600;
+}
+.amount-neutral {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* Mobile bottom nav safe area */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
