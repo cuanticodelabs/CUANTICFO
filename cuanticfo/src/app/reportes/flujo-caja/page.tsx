@@ -48,7 +48,7 @@ export default function FlujoCajaPage() {
               <XAxis dataKey="fecha" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false}
                 tickFormatter={(v) => `$${(v / 1_000_000).toFixed(0)}M`} width={48} />
-              <Tooltip formatter={(v: number) => formatCLP(v)} />
+              <Tooltip formatter={(v) => formatCLP(Number(v))} />
               <Area type="monotone" dataKey="saldo" stroke="#2563eb" strokeWidth={2.5}
                 fill="url(#saldoGrad)" dot={{ fill: '#2563eb', r: 4 }} />
             </AreaChart>

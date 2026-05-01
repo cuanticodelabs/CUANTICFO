@@ -66,7 +66,7 @@ export default function EstadoResultadosPage() {
                 <XAxis dataKey="mes" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false}
                   tickFormatter={(v) => `$${(v / 1_000_000).toFixed(0)}M`} width={45} />
-                <Tooltip formatter={(v: number) => formatCLP(v)} />
+                <Tooltip formatter={(v) => formatCLP(Number(v))} />
                 <Line type="monotone" dataKey="resultado" stroke="#2563eb" strokeWidth={2.5}
                   dot={{ fill: '#2563eb', r: 4 }} activeDot={{ r: 6 }} />
               </LineChart>

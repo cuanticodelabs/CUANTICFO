@@ -92,6 +92,60 @@ export async function getGastos(_periodo?: string) {
   return mockGastos;
 }
 
+/**
+ * Input para crear un gasto desde el frontend.
+ * empresa_id y created_at se inyectan server-side.
+ */
+export interface CreateGastoInput {
+  fecha_documento: string;
+  proveedor: string;
+  rut_proveedor?: string;
+  folio?: string;
+  tipo_documento: string;
+  categoria_id?: string;
+  neto: number;
+  iva: number;
+  exento?: number;
+  total: number;
+  usa_credito_fiscal: boolean;
+  estado_pago: string;
+  tiene_respaldo?: boolean;
+  proyecto_id?: string | null;
+  archivo_url?: string;
+}
+
+/** Respuesta del API /api/finance/gastos */
+export interface CreateGastoResponse {
+  ok: boolean;
+  gasto_id?: string;
+  message?: string;
+  error?: string;
+  campo?: string;
+  alertas?: Array<{ tipo: string; descripcion: string }>;
+}
+
+/**
+ * Crea un gasto a través del proxy Next.js → n8n.
+ * Flujo: Client → /api/finance/gastos → n8n /create-expense → Supabase
+ */
+export async function createGasto(
+  input: CreateGastoInput
+): Promise<CreateGastoResponse> {
+  const res = await fetch('/api/finance/gastos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+
+  const data: CreateGastoResponse = await res.json();
+
+  if (!res.ok || !data.ok) {
+    throw new Error(data.message || 'Error al crear el gasto');
+  }
+
+  return data;
+}
+
 // ---- ALERTAS ----
 export async function getAlertas(_periodo?: string) {
   await delay();

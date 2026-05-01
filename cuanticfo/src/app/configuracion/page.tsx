@@ -4,9 +4,10 @@ import { useState } from 'react';
 import AppShell from '@/components/layout/AppShell';
 import { mockEmpresa } from '@/lib/mock-data/dashboard';
 import { Building2, Save } from 'lucide-react';
+import type { Empresa } from '@/lib/types';
 
 export default function ConfiguracionPage() {
-  const [empresa, setEmpresa] = useState({ ...mockEmpresa });
+  const [empresa, setEmpresa] = useState<Empresa>({ ...mockEmpresa });
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
