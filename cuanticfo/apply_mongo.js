@@ -1,10 +1,10 @@
 const { MongoClient } = require('mongodb');
 async function run() {
-  const client = new MongoClient('mongodb://admin:WA9qG7%3F%29%23%40um3-%23@localhost:27018/cuanticfo?authSource=admin');
+  const client = new MongoClient('mongodb://admin:WA9qG7%3F%29%23%40um3-%23@localhost:27018/cuanticfo_db?authSource=admin');
   try {
     await client.connect();
     console.log('Connected');
-    const db = client.db('cuanticfo');
+    const db = client.db('cuanticfo_db');
     const existingCols = await db.listCollections().toArray();
     const existingColNames = existingCols.map(c => c.name);
     
