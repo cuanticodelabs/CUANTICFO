@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__n8n-mcp__get_workflow_details",
+      "mcp__n8n-mcp__search_nodes",
+      "mcp__n8n-mcp__get_sdk_reference",
+      "mcp__n8n-mcp__get_node_types",
+      "mcp__n8n-mcp__update_workflow",
+      "mcp__n8n-mcp__search_workflows",
+      "mcp__n8n-mcp__validate_workflow"
+    ]
+  }
+}

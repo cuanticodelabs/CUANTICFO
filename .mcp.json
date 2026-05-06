@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "n8n-mcp": {
+      "type": "http",
+      "url": "https://n8n.cuanticode.com/mcp-server/http",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyYTEyN2MwMy00Yzg0LTRjZTMtOGEyNy0yY2U3MGFkODkxMmEiLCJpc3MiOiJuOG4iLCJhdWQiOiJtY3Atc2VydmVyLWFwaSIsImp0aSI6ImJiMGNiY2I1LWU3YTAtNDYwNC04MWZiLWJlOWRhNzNhMDIxMCIsImlhdCI6MTc3ODEwNTQ0MX0.3Ji61St-EOE-9y3Q1JsXkzWvwW8Bu7ifSFCVUa55p5M"
+      }
+    }
+  }
+}
