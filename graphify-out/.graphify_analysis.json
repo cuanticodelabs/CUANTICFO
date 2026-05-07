@@ -1,0 +1,371 @@
+{
+  "communities": {
+    "0": [
+      "alertas_page_activetab_setactivetab",
+      "alertas_page_filtered",
+      "alertas_page_tabs",
+      "app_page_homepage",
+      "cierres_page_alldone",
+      "cierres_page_cierre_setcierre",
+      "cierres_page_handletoggle",
+      "configuracion_page_empresa_setempresa",
+      "configuracion_page_handlesave",
+      "configuracion_page_saved_setsaved",
+      "cuanticfo_src_app_page_tsx",
+      "cuanticfo_src_lib_mock_data_dashboard_ts",
+      "cuanticfo_src_lib_mock_data_reportes_ts",
+      "dashboard_page_alertasactivas",
+      "dashboard_page_quickactions",
+      "documentos_page_documentospage",
+      "estado_resultados_page_row",
+      "gastos_page_pagados",
+      "gastos_page_pendientes",
+      "gastos_page_total",
+      "impuestos_page_impuestospage",
+      "ingresos_page_cobrados",
+      "libros_page_activelibro_setactivelibro",
+      "libros_page_libros",
+      "libros_page_totaliva",
+      "libros_page_totalmonto",
+      "libros_page_totalneto",
+      "mock_data_dashboard_mockchartdata",
+      "mock_data_dashboard_mockcuentasbancarias",
+      "mock_data_dashboard_mockcuentasporcobrar",
+      "mock_data_dashboard_mockcuentasporpagar",
+      "mock_data_dashboard_mockdistribuciongastos",
+      "mock_data_dashboard_mockkpis",
+      "mock_data_dashboard_mockultimosmovimientos",
+      "mock_data_reportes_mockestadoresultados",
+      "mock_data_reportes_mockestadoresultadoshistorico",
+      "mock_data_reportes_mockflujocaja",
+      "movimientos_page_search_setsearch",
+      "types_index_cuentabancaria",
+      "types_index_estadoresultados",
+      "types_index_flujocaja"
+    ],
+    "1": [
+      "api_contracts_create_income",
+      "cuanticfo_src_lib_mock_data_alertas_ts",
+      "finance_service",
+      "mock_data_alertas_mockalertas",
+      "mock_data_alertas_mockcierre",
+      "mock_data_alertas_mockimpuesto",
+      "modelo_datos_ingresos",
+      "n8n_workflows_wf01",
+      "services_finance_service_creategasto",
+      "services_finance_service_creategastoinput",
+      "services_finance_service_creategastoresponse",
+      "services_finance_service_delay",
+      "services_finance_service_getalertas",
+      "services_finance_service_getchartdata",
+      "services_finance_service_getcierremensual",
+      "services_finance_service_getcuentasbancarias",
+      "services_finance_service_getcuentasporcobrar",
+      "services_finance_service_getcuentasporpagar",
+      "services_finance_service_getdashboardkpis",
+      "services_finance_service_getdistribuciongastos",
+      "services_finance_service_getempresa",
+      "services_finance_service_getestadoresultados",
+      "services_finance_service_getestadoresultadoshistorico",
+      "services_finance_service_getflujocaja",
+      "services_finance_service_getgastos",
+      "services_finance_service_getimpuestomensual",
+      "services_finance_service_getingresos",
+      "services_finance_service_getmovimientos",
+      "services_finance_service_getultimosmovimientos",
+      "services_finance_service_getusuario"
+    ],
+    "2": [
+      "cuanticfo_src_components_layout_appshell_tsx",
+      "cuanticfo_src_components_layout_sidebar_tsx",
+      "cuanticfo_src_components_layout_topbar_tsx",
+      "cuanticfo_src_components_ui_kpicard_tsx",
+      "cuanticfo_src_lib_utils_format_ts",
+      "layout_appshell_appshell",
+      "layout_appshell_appshellprops",
+      "layout_bottomnav_bottomnav",
+      "layout_sidebar_collapsed_setcollapsed",
+      "layout_sidebar_navitem",
+      "layout_sidebar_navsection",
+      "layout_sidebar_pathname",
+      "layout_topbar_periodos",
+      "layout_topbar_showperiodos_setshowperiodos",
+      "layout_topbar_topbarprops",
+      "mock_data_dashboard_mockempresa",
+      "mock_data_dashboard_mockusuario",
+      "types_index_kpidata",
+      "ui_kpicard_colormap",
+      "ui_kpicard_iconmap",
+      "ui_kpicard_kpicardprops",
+      "ui_kpicard_sparklinecolor",
+      "ui_quickactionbutton_quickactionbutton",
+      "utils_format_capitalize",
+      "utils_format_cn",
+      "utils_format_formatpct",
+      "utils_format_formatperiodo"
+    ],
+    "3": [
+      "cuanticfo_src_components_ui_alertcard_tsx",
+      "cuanticfo_src_components_ui_closeperiodchecklist_tsx",
+      "cuanticfo_src_lib_mock_data_movimientos_ts",
+      "cuanticfo_src_lib_types_index_ts",
+      "mock_data_movimientos_mockgastos",
+      "mock_data_movimientos_mockingresos",
+      "mock_data_movimientos_mockmovimientos",
+      "types_index_alerta",
+      "types_index_cierremensual",
+      "types_index_empresa",
+      "types_index_estadoalerta",
+      "types_index_estadocobro",
+      "types_index_estadopago",
+      "types_index_flujocajaproyeccion",
+      "types_index_gasto",
+      "types_index_ingreso",
+      "types_index_rolusuario",
+      "types_index_severidadalerta",
+      "types_index_tipodocumento",
+      "types_index_tipomovimiento",
+      "types_index_usuario",
+      "types_index_uuid",
+      "ui_alertcard_alertcardprops",
+      "ui_alertcard_severityconfig",
+      "ui_closeperiodchecklist_checklistitem",
+      "ui_closeperiodchecklist_closeperiodchecklistprops",
+      "ui_closeperiodchecklist_pct"
+    ],
+    "4": [
+      "api_n8n_client_assertenvvars",
+      "api_n8n_client_n8nerror",
+      "api_n8n_client_n8nerror_constructor",
+      "api_n8n_client_n8nfetch",
+      "api_n8n_client_n8nrequestoptions",
+      "api_n8n_client_n8nresponse",
+      "cuanticfo_src_app_api_finance_gastos_route_ts",
+      "cuanticfo_src_lib_api_n8n_client_ts",
+      "gastos_route_createexpensepayload",
+      "gastos_route_createexpenseresponse",
+      "gastos_route_get",
+      "gastos_route_post"
+    ],
+    "5": [
+      "charts_donutchart_customtooltip",
+      "charts_donutchart_donutchartprops",
+      "cuanticfo_src_components_charts_donutchart_tsx",
+      "cuanticfo_src_components_ui_financialchartcard_tsx",
+      "cuanticfo_src_components_ui_taxsummarycard_tsx",
+      "types_index_chartdatapoint",
+      "types_index_donutdatapoint",
+      "types_index_impuestomensual",
+      "ui_financialchartcard_financialchartcardprops",
+      "ui_taxsummarycard_rows",
+      "ui_taxsummarycard_taxsummarycardprops",
+      "utils_format_formatclp"
+    ],
+    "6": [
+      "cuanticfo_src_components_ui_movementlistmobile_tsx",
+      "cuanticfo_src_components_ui_movementtable_tsx",
+      "gastos_page_estadobadge",
+      "types_index_movimiento",
+      "ui_movementlistmobile_movementlistmobileprops",
+      "ui_movementtable_estadolabel",
+      "ui_movementtable_movementtableprops",
+      "utils_format_formatdate"
+    ],
+    "7": [
+      "cuanticfo_apply_mongo_js",
+      "cuanticfo_apply_mongo_mongoclient",
+      "cuanticfo_apply_mongo_run",
+      "cuanticfo_cuanticfo_schema_mongo_createcollectionifnotexists",
+      "cuanticfo_schema_mongo_js"
+    ],
+    "8": [
+      "cuanticfo_convert_code",
+      "cuanticfo_convert_fs",
+      "cuanticfo_convert_js",
+      "cuanticfo_convert_line1",
+      "cuanticfo_convert_startidx"
+    ],
+    "9": [
+      "app_layout_metadata",
+      "app_layout_rootlayout",
+      "cuanticfo_src_app_layout_tsx"
+    ],
+    "10": [
+      "api_contracts_create_expense",
+      "modelo_datos_gastos",
+      "n8n_workflows_wf02"
+    ],
+    "11": [
+      "api_contracts_prepare_f29",
+      "modelo_datos_impuestos_mensuales",
+      "n8n_workflows_wf06"
+    ],
+    "12": [
+      "api_contracts_close_month",
+      "modelo_datos_cierres_mensuales",
+      "n8n_workflows_wf09"
+    ],
+    "13": [
+      "cuanticfo_postcss_config_config",
+      "cuanticfo_postcss_config_mjs"
+    ],
+    "14": [
+      "api_contracts_upload_document",
+      "n8n_workflows_wf03"
+    ],
+    "15": [
+      "cuanticfo_eslint_config_mjs"
+    ],
+    "16": [
+      "cuanticfo_next_env_d_ts"
+    ],
+    "17": [
+      "cuanticfo_next_config_ts"
+    ],
+    "18": [
+      "api_contracts_generate_purchase_book"
+    ],
+    "19": [
+      "api_contracts_generate_sales_book"
+    ],
+    "20": [
+      "modelo_datos_empresas"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06,
+    "1": 0.11,
+    "2": 0.11,
+    "3": 0.09,
+    "4": 0.21,
+    "5": 0.18,
+    "6": 0.36,
+    "7": 0.4,
+    "8": 0.4,
+    "9": 0.67,
+    "10": 0.67,
+    "11": 0.67,
+    "12": 0.67,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0,
+    "20": 1.0
+  },
+  "gods": [
+    {
+      "id": "finance_service",
+      "label": "Finance Service",
+      "degree": 45
+    },
+    {
+      "id": "services_finance_service_delay",
+      "label": "delay()",
+      "degree": 19
+    },
+    {
+      "id": "utils_format_cn",
+      "label": "cn()",
+      "degree": 11
+    },
+    {
+      "id": "utils_format_formatclp",
+      "label": "formatCLP()",
+      "degree": 8
+    },
+    {
+      "id": "types_index_movimiento",
+      "label": "Movimiento",
+      "degree": 5
+    },
+    {
+      "id": "utils_format_formatdate",
+      "label": "formatDate()",
+      "degree": 5
+    },
+    {
+      "id": "layout_bottomnav_bottomnav",
+      "label": "BottomNav()",
+      "degree": 4
+    },
+    {
+      "id": "ui_quickactionbutton_quickactionbutton",
+      "label": "QuickActionButton()",
+      "degree": 4
+    },
+    {
+      "id": "mock_data_dashboard_mockempresa",
+      "label": "mockEmpresa",
+      "degree": 4
+    },
+    {
+      "id": "types_index_cierremensual",
+      "label": "CierreMensual",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Finance Service",
+      "target": "Crear ingreso (API)",
+      "source_files": [
+        "cuanticfo/services/finance.service.ts",
+        "API_CONTRACTS.md"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; crosses file types (doc \u2194 code); connects across different repos/directories; peripheral node `Crear ingreso (API)` unexpectedly reaches hub `Finance Service`"
+    },
+    {
+      "source": "run()",
+      "target": "createCollectionIfNotExists()",
+      "source_files": [
+        "cuanticfo/apply_mongo.js",
+        "cuanticfo_schema.mongo.js"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "WF-01: Crear Ingreso",
+      "target": "Ingresos (Table)",
+      "source_files": [
+        "N8N_WORKFLOWS.md",
+        "Modelo_datos.txt"
+      ],
+      "confidence": "INFERRED",
+      "relation": "implements",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "WF-02: Crear Gasto",
+      "target": "Gastos (Table)",
+      "source_files": [
+        "N8N_WORKFLOWS.md",
+        "Modelo_datos.txt"
+      ],
+      "confidence": "INFERRED",
+      "relation": "implements",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "WF-06: Preparar F29",
+      "target": "Impuestos Mensuales (Table)",
+      "source_files": [
+        "N8N_WORKFLOWS.md",
+        "Modelo_datos.txt"
+      ],
+      "confidence": "INFERRED",
+      "relation": "implements",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    }
+  ],
+  "tokens": {
+    "input": 82939,
+    "output": 2870
+  }
+}

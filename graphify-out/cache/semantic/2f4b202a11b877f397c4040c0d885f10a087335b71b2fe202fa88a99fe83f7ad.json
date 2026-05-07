@@ -1,0 +1,1 @@
+{"nodes": [], "edges": [{"source": "finance_service", "target": "api_contracts_create_income", "relation": "references", "confidence": "INFERRED", "confidence_score": 0.8, "source_file": "cuanticfo/FRONTEND_NOTES.md", "source_location": null, "weight": 1.0}], "hyperedges": []}
