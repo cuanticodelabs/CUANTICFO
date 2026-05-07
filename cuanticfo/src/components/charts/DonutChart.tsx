@@ -22,9 +22,9 @@ interface DonutChartProps {
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border border-slate-200 rounded-xl shadow-lg p-3 text-sm">
-        <p className="font-semibold text-slate-700">{payload[0].name}</p>
-        <p className="text-slate-500">{payload[0].value}%</p>
+      <div className="rounded-xl shadow-lg p-3 text-sm" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
+        <p className="font-semibold" style={{ color: 'var(--color-text-contrast)' }}>{payload[0].name}</p>
+        <p style={{ color: 'var(--color-text-secondary)' }}>{payload[0].value}%</p>
       </div>
     );
   }
@@ -42,8 +42,8 @@ export default function DonutChart({
     <div className={`card p-5 ${className || ''}`}>
       {title && (
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-slate-800">{title}</h3>
-          <span className="text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">Este mes</span>
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>{title}</h3>
+          <span className="text-xs px-2 py-1 rounded-lg" style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-app-bg)' }}>Este mes</span>
         </div>
       )}
 
@@ -70,10 +70,10 @@ export default function DonutChart({
           </ResponsiveContainer>
           {centerValue !== undefined && (
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-sm font-bold text-slate-900">
+              <span className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>
                 {formatCLP(centerValue, true)}
               </span>
-              <span className="text-[10px] text-slate-400">{centerLabel}</span>
+              <span className="text-[10px]" style={{ color: 'var(--color-text-muted)' }}>{centerLabel}</span>
             </div>
           )}
         </div>
@@ -83,8 +83,8 @@ export default function DonutChart({
           {data.map((item) => (
             <div key={item.name} className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-              <span className="text-xs text-slate-600 flex-1">{item.name}</span>
-              <span className="text-xs font-semibold text-slate-700">{item.value}%</span>
+              <span className="text-xs flex-1" style={{ color: 'var(--color-text-secondary)' }}>{item.name}</span>
+              <span className="text-xs font-semibold" style={{ color: 'var(--color-text-contrast)' }}>{item.value}%</span>
             </div>
           ))}
         </div>

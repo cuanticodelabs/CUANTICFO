@@ -9,7 +9,17 @@
       "mcp__n8n-mcp__get_node_types",
       "mcp__n8n-mcp__update_workflow",
       "mcp__n8n-mcp__search_workflows",
-      "mcp__n8n-mcp__validate_workflow"
+      "mcp__n8n-mcp__validate_workflow",
+      "Bash(npx tsc *)",
+      "Bash(node *)",
+      "Bash(New-Item -ItemType Directory -Force -Path \"E:\\\\Proyectos\\\\CUANTICFO\\\\cuanticfo\\\\.impeccable\")",
+      "Bash(Out-Null)",
+      "Bash(Write-Output \"done\")",
+      "Bash(npm uninstall *)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "n8n-mcp"
+  ]
 }

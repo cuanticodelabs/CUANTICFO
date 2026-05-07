@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "title": "CuantiCFO Design System",
+    "version": "1.0.0",
+    "generated": "2026-05-07",
+    "register": "product",
+    "north_star": "The Report",
+    "elevation": "minimal-shadow",
+    "component_tone": "measured"
+  },
+  "tokens": {
+    "color": {
+      "accent":              "#2563eb",
+      "accent-dark":         "#1d4ed8",
+      "accent-light":        "#eff6ff",
+      "accent-tint":         "#dbeafe",
+      "income":              "#16a34a",
+      "income-dark":         "#15803d",
+      "income-light":        "#f0fdf4",
+      "income-tint":         "#dcfce7",
+      "expense":             "#dc2626",
+      "expense-dark":        "#b91c1c",
+      "expense-light":       "#fef2f2",
+      "expense-tint":        "#fee2e2",
+      "alert-high":          "#dc2626",
+      "alert-medium":        "#ea580c",
+      "alert-medium-dark":   "#c2410c",
+      "alert-low":           "#2563eb",
+      "warning":             "#d97706",
+      "warning-light":       "#fffbeb",
+      "warning-tint":        "#ffedd5",
+      "cobrar":              "#7c3aed",
+      "cobrar-dark":         "#6d28d9",
+      "cobrar-light":        "#faf5ff",
+      "sidebar":             "#0f1729",
+      "sidebar-hover":       "#1e2d4a",
+      "sidebar-active":      "#2563eb",
+      "sidebar-text":        "#ffffff",
+      "app-bg":              "#f1f5f9",
+      "card":                "#ffffff",
+      "border":              "#e2e8f0",
+      "text-primary":        "#0f172a",
+      "text-secondary":      "#64748b",
+      "text-muted":          "#94a3b8",
+      "text-contrast":       "#475569",
+      "scrollbar-thumb":     "#cbd5e1"
+    },
+    "typography": {
+      "font-sans": "\"Inter\", system-ui, -apple-system, sans-serif",
+      "base-size": "16px",
+      "scale": {
+        "kpi-hero":    { "size": "30–36px", "weight": 700, "class": "text-3xl md:text-4xl font-bold tracking-tight" },
+        "kpi-compact": { "size": "20px",    "weight": 700, "class": "text-xl font-bold" },
+        "card-heading":{ "size": "14px",    "weight": 600, "class": "text-sm font-semibold" },
+        "body":        { "size": "14px",    "weight": 400, "class": "text-sm" },
+        "label-allcaps":{ "size": "11px",   "weight": 600, "class": "text-[11px] font-semibold uppercase tracking-[0.09em]" },
+        "meta":        { "size": "12px",    "weight": 400, "class": "text-xs" },
+        "micro":       { "size": "10px",    "weight": 600, "class": "text-[10px]" }
+      }
+    },
+    "elevation": {
+      "page":    { "shadow": "none",                               "border": "none" },
+      "card":    { "shadow": "0 1px 3px rgba(0,0,0,0.04)",        "border": "1px solid var(--color-border)",  "radius": "12px" },
+      "hover":   { "shadow": "0 4px 12px rgba(0,0,0,0.08)",       "transform": "translateY(-1px)" },
+      "floating":{ "shadow": "0 8px 24px rgba(0,0,0,0.12)",       "use": "dropdowns, popovers" },
+      "modal":   { "shadow": "0 20px 48px rgba(0,0,0,0.18)",      "use": "modals only, with backdrop" }
+    },
+    "motion": {
+      "page-enter":  { "duration": "0.3s", "easing": "ease",     "keyframe": "fadeIn (opacity 0→1, translateY 8px→0)" },
+      "card-hover":  { "duration": "0.2s", "easing": "ease",     "property": "box-shadow, transform" },
+      "dropdown":    { "duration": "0.15s","easing": "ease-out", "property": "opacity, transform" }
+    }
+  },
+  "components": {
+    "card": {
+      "classes": "card",
+      "css": "background-color:var(--color-card);border-radius:12px;border:1px solid var(--color-border);box-shadow:0 1px 3px rgba(0,0,0,0.04)"
+    },
+    "kpi-featured": {
+      "variant": "featured",
+      "structure": "label (allcaps muted) > number (hero) > trend row > sparkline (opacity-40)",
+      "rule": "No icon circle. The number is the identity."
+    },
+    "kpi-compact": {
+      "variant": "compact",
+      "structure": "label (muted) > abbreviated number > trend row",
+      "rule": "No card wrapper. Lives inside a shared card with divide-x."
+    },
+    "kpi-section-pattern": {
+      "layout": "2 featured (resultado+caja) in sm:grid-cols-2, then 1 card with 3 compact (ingreso+gasto+iva) in sm:grid-cols-3 divide-x",
+      "anti-pattern": "Five equal KPI cards in a row (hero-metric template)"
+    },
+    "badge": {
+      "variants": ["badge-green","badge-red","badge-orange","badge-blue","badge-gray"],
+      "rule": "Tint background + dark text. Never saturated background."
+    },
+    "amount": {
+      "variants": ["amount-positive","amount-negative","amount-neutral"],
+      "rule": "Always pair with directional icon when direction matters. Never color alone."
+    },
+    "sidebar": {
+      "background": "var(--color-sidebar)",
+      "rule": "Always dark regardless of page color mode. Active links use aria-current=page."
+    },
+    "focus": {
+      "css": "outline:2px solid var(--color-accent);outline-offset:2px;border-radius:4px",
+      "rule": "Never suppress :focus-visible without equivalent visible replacement."
+    }
+  },
+  "narrative": {
+    "north_star_description": "The Report — a McKinsey exhibit made interactive. Each page answers exactly one question. Sections are structured, labels are precise, charts earn their position.",
+    "mood": "Precise. Confident. Unhurried.",
+    "visual_keywords": ["tabular", "structured", "legible", "reserved"],
+    "color_strategy": "Restrained — tinted neutrals + blue accent ≤10% of surface. Financial semantic colors (income/expense/cobrar) are functional signals only.",
+    "encoding_rule": "Financial direction encoded with both color AND directional icon. Color alone is never sufficient.",
+    "anti_patterns": [
+      "hero-metric template (five equal KPI cards)",
+      "icon circle on hero numbers",
+      "gradient text or gradient accents",
+      "side-stripe border accents",
+      "identical card grids",
+      "nested cards"
+    ]
+  }
+}

@@ -40,17 +40,17 @@ export default function FlujoCajaPage() {
             <AreaChart data={fc.proyeccion}>
               <defs>
                 <linearGradient id="saldoGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+                  <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="fecha" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-app-bg)" />
+              <XAxis dataKey="fecha" tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} axisLine={false} tickLine={false}
                 tickFormatter={(v) => `$${(v / 1_000_000).toFixed(0)}M`} width={48} />
               <Tooltip formatter={(v) => formatCLP(Number(v))} />
-              <Area type="monotone" dataKey="saldo" stroke="#2563eb" strokeWidth={2.5}
-                fill="url(#saldoGrad)" dot={{ fill: '#2563eb', r: 4 }} />
+              <Area type="monotone" dataKey="saldo" stroke="var(--color-accent)" strokeWidth={2.5}
+                fill="url(#saldoGrad)" dot={{ fill: 'var(--color-accent)', r: 4 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>

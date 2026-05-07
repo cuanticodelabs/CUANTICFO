@@ -62,13 +62,13 @@ export default function EstadoResultadosPage() {
             <p className="text-xs text-slate-400 mb-3">Últimos 6 meses</p>
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={mockEstadoResultadosHistorico}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="mes" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false}
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-app-bg)" />
+                <XAxis dataKey="mes" tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} axisLine={false} tickLine={false}
                   tickFormatter={(v) => `$${(v / 1_000_000).toFixed(0)}M`} width={45} />
                 <Tooltip formatter={(v) => formatCLP(Number(v))} />
-                <Line type="monotone" dataKey="resultado" stroke="#2563eb" strokeWidth={2.5}
-                  dot={{ fill: '#2563eb', r: 4 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="resultado" stroke="var(--color-accent)" strokeWidth={2.5}
+                  dot={{ fill: 'var(--color-accent)', r: 4 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>

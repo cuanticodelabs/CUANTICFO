@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Bell, ChevronDown, Calendar } from 'lucide-react';
 import { cn, formatPeriodo } from '@/lib/utils/format';
 import { mockUsuario } from '@/lib/mock-data/dashboard';
@@ -20,6 +20,15 @@ interface TopBarProps {
 export default function TopBar({ periodo, onPeriodoChange, title, subtitle }: TopBarProps) {
   const [showPeriodos, setShowPeriodos] = useState(false);
 
+  useEffect(() => {
+    if (!showPeriodos) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowPeriodos(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showPeriodos]);
+
   return (
     <header className="sticky top-0 z-20 bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between gap-4">
       {/* Left: Title */}
@@ -38,24 +47,35 @@ export default function TopBar({ periodo, onPeriodoChange, title, subtitle }: To
         <div className="relative">
           <button
             onClick={() => setShowPeriodos(!showPeriodos)}
+            aria-expanded={showPeriodos}
+            aria-haspopup="listbox"
+            aria-controls="periodo-listbox"
+            aria-label={`Período: ${formatPeriodo(periodo)}`}
             className={cn(
               'flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors',
               'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
             )}
           >
-            <Calendar size={15} className="text-slate-400" />
+            <Calendar size={15} className="text-slate-400" aria-hidden="true" />
             <span className="hidden sm:inline capitalize">
               {formatPeriodo(periodo)}
             </span>
             <span className="sm:hidden">{periodo}</span>
-            <ChevronDown size={14} className="text-slate-400" />
+            <ChevronDown size={14} className="text-slate-400" aria-hidden="true" />
           </button>
 
           {showPeriodos && (
-            <div className="absolute top-full right-0 mt-1 w-44 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-50">
+            <div
+              id="periodo-listbox"
+              role="listbox"
+              aria-label="Seleccionar período"
+              className="absolute top-full right-0 mt-1 w-44 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-50"
+            >
               {PERIODOS.map((p) => (
                 <button
                   key={p}
+                  role="option"
+                  aria-selected={p === periodo}
                   onClick={() => { onPeriodoChange(p); setShowPeriodos(false); }}
                   className={cn(
                     'w-full text-left px-4 py-2 text-sm capitalize hover:bg-slate-50 transition-colors',
@@ -99,9 +119,16 @@ export default function TopBar({ periodo, onPeriodoChange, title, subtitle }: To
 
 function Link_Bell() {
   return (
-    <a href="/alertas" className="relative p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
-      <Bell size={20} className="text-slate-500" />
-      <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-red-500 rounded-full text-white text-[9px] font-bold flex items-center justify-center">
+    <a
+      href="/alertas"
+      className="relative p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+      aria-label="Alertas, 5 sin leer"
+    >
+      <Bell size={20} className="text-slate-500" aria-hidden="true" />
+      <span
+        className="absolute top-0.5 right-0.5 w-4 h-4 bg-red-500 rounded-full text-white text-[9px] font-bold flex items-center justify-center"
+        aria-hidden="true"
+      >
         5
       </span>
     </a>

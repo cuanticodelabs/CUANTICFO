@@ -38,24 +38,22 @@ export default function MovementListMobile({ movimientos, className }: MovementL
           >
             {/* Icon */}
             <div
-              className={cn(
-                'w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0',
-                isIngreso ? 'bg-green-50' : 'bg-red-50'
-              )}
+              className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: isIngreso ? 'var(--color-income-light)' : 'var(--color-expense-light)' }}
             >
               {isIngreso ? (
-                <TrendingUp size={17} className="text-green-600" />
+                <TrendingUp size={17} style={{ color: 'var(--color-income)' }} />
               ) : (
-                <TrendingDown size={17} className="text-red-500" />
+                <TrendingDown size={17} style={{ color: 'var(--color-expense)' }} />
               )}
             </div>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-800 truncate">
+              <p className="text-sm font-semibold truncate" style={{ color: 'var(--color-text-primary)' }}>
                 {mov.documento}
               </p>
-              <p className="text-xs text-slate-500 truncate">
+              <p className="text-xs truncate" style={{ color: 'var(--color-text-secondary)' }}>
                 {mov.cliente_proveedor}
               </p>
             </div>
@@ -63,10 +61,8 @@ export default function MovementListMobile({ movimientos, className }: MovementL
             {/* Right side */}
             <div className="text-right flex-shrink-0">
               <p
-                className={cn(
-                  'text-sm font-bold',
-                  isIngreso ? 'text-slate-900' : 'text-red-600'
-                )}
+                className="text-sm font-bold"
+                style={{ color: isIngreso ? 'var(--color-text-primary)' : 'var(--color-expense)' }}
               >
                 {formatCLP(mov.monto)}
               </p>

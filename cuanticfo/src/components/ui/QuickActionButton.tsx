@@ -33,7 +33,7 @@ export default function QuickActionButton({
     <Link
       href={href}
       className={cn(
-        'flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-150',
+        'flex flex-col items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-xl transition-all duration-150',
         colors.bg,
         colors.hover,
         'hover:shadow-sm active:scale-95',
@@ -43,7 +43,7 @@ export default function QuickActionButton({
       <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center', colors.bg)}>
         <Icon size={20} className={colors.icon} />
       </div>
-      <span className="text-[11px] font-semibold text-slate-600 text-center leading-tight">
+      <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 text-center leading-tight">
         {label}
       </span>
     </Link>

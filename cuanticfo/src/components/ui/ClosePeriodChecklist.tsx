@@ -39,7 +39,7 @@ export default function ClosePeriodChecklist({
   return (
     <div className={cn('card p-5', className)}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-slate-800">Checklist cierre mensual</h3>
+        <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Checklist cierre mensual</h3>
         {cierre.cerrado && (
           <span className="flex items-center gap-1 text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-1 rounded-full">
             <Lock size={11} /> Cerrado
@@ -51,11 +51,11 @@ export default function ClosePeriodChecklist({
       <div className="flex items-center gap-4 mb-4">
         <div className="relative w-16 h-16 flex-shrink-0">
           <svg viewBox="0 0 36 36" className="w-16 h-16 -rotate-90">
-            <circle cx="18" cy="18" r="15" fill="none" stroke="#e2e8f0" strokeWidth="3" />
+            <circle cx="18" cy="18" r="15" fill="none" stroke="var(--color-border)" strokeWidth="3" />
             <circle
               cx="18" cy="18" r="15"
               fill="none"
-              stroke={pct === 100 ? '#16a34a' : '#2563eb'}
+              stroke={pct === 100 ? 'var(--color-income)' : 'var(--color-accent)'}
               strokeWidth="3"
               strokeDasharray={`${(pct / 100) * 94.25} 94.25`}
               strokeLinecap="round"
@@ -63,12 +63,12 @@ export default function ClosePeriodChecklist({
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-sm font-bold text-slate-800">{pct}%</span>
+            <span className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{pct}%</span>
           </div>
         </div>
         <div>
-          <p className="text-xl font-bold text-slate-900">{completed} de {total}</p>
-          <p className="text-xs text-slate-500">completadas</p>
+          <p className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{completed} de {total}</p>
+          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>completadas</p>
         </div>
       </div>
 
@@ -83,20 +83,17 @@ export default function ClosePeriodChecklist({
               className="w-full flex items-center gap-2.5 text-left hover:bg-slate-50 px-1.5 py-1 rounded-lg transition-colors"
             >
               <div
-                className={cn(
-                  'w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors',
-                  done
-                    ? 'bg-green-500 border-green-500'
-                    : 'border-slate-300 bg-white'
-                )}
+                className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
+                style={{
+                  backgroundColor: done ? 'var(--color-income)' : 'var(--color-card)',
+                  borderColor: done ? 'var(--color-income)' : 'var(--color-border)',
+                }}
               >
                 {done && <Check size={11} className="text-white" strokeWidth={3} />}
               </div>
               <span
-                className={cn(
-                  'text-sm flex-1',
-                  done ? 'text-slate-400 line-through' : 'text-slate-700'
-                )}
+                className="text-sm flex-1"
+                style={{ color: done ? 'var(--color-text-muted)' : 'var(--color-text-contrast)', textDecoration: done ? 'line-through' : 'none' }}
               >
                 {item.label}
               </span>

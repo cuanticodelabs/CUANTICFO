@@ -97,7 +97,7 @@ export default function Sidebar() {
         'hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 z-30',
         collapsed ? 'w-16' : 'w-64'
       )}
-      style={{ backgroundColor: '#0f1729' }}
+      style={{ backgroundColor: 'var(--color-sidebar)' }}
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/10">
@@ -111,22 +111,28 @@ export default function Sidebar() {
 
       {/* Company Selector */}
       {!collapsed && (
-        <div className="mx-3 mt-3 mb-1 px-3 py-2 rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-blue-700 rounded-md flex items-center justify-center flex-shrink-0">
-              <Building2 size={14} className="text-white" />
+        <div className="mx-3 mt-3 mb-1">
+          <button
+            type="button"
+            aria-label={`Empresa activa: ${mockEmpresa.razon_social}. Cambiar empresa`}
+            className="w-full px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left bg-transparent"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 bg-blue-700 rounded-md flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                <Building2 size={14} className="text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white text-xs font-semibold truncate">{mockEmpresa.razon_social}</p>
+                <p className="text-blue-300 text-xs truncate">{mockEmpresa.rut}</p>
+              </div>
+              <ChevronRight size={14} className="text-white/40 flex-shrink-0" aria-hidden="true" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-xs font-semibold truncate">{mockEmpresa.razon_social}</p>
-              <p className="text-blue-300 text-xs truncate">{mockEmpresa.rut}</p>
-            </div>
-            <ChevronRight size={14} className="text-white/40 flex-shrink-0" />
-          </div>
+          </button>
         </div>
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-3 px-2">
+      <nav className="flex-1 overflow-y-auto py-3 px-2" aria-label="Navegación principal">
         {navSections.map((section) => (
           <div key={section.title} className="mb-4">
             {!collapsed && (
@@ -140,6 +146,7 @@ export default function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  aria-current={isActive ? 'page' : undefined}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg mb-0.5 transition-all duration-150',
                     isActive
@@ -150,6 +157,7 @@ export default function Sidebar() {
                 >
                   <item.icon
                     size={18}
+                    aria-hidden="true"
                     className={cn('flex-shrink-0', isActive ? 'text-white' : 'text-white/60')}
                   />
                   {!collapsed && (
@@ -177,14 +185,16 @@ export default function Sidebar() {
       {/* Collapse button */}
       <button
         onClick={() => setCollapsed(!collapsed)}
+        aria-expanded={!collapsed}
+        aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
         className="flex items-center gap-2 px-4 py-3 border-t border-white/10 text-white/40 hover:text-white/70 transition-colors text-sm"
       >
         {collapsed ? (
-          <ChevronRight size={16} />
+          <ChevronRight size={16} aria-hidden="true" />
         ) : (
           <>
-            <ChevronLeft size={16} />
-            <span>Colapsar menú</span>
+            <ChevronLeft size={16} aria-hidden="true" />
+            <span aria-hidden="true">Colapsar menú</span>
           </>
         )}
       </button>

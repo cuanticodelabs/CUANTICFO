@@ -22,15 +22,15 @@ interface FinancialChartCardProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white border border-slate-200 rounded-xl shadow-lg p-3 text-sm">
-        <p className="font-semibold text-slate-700 mb-2">{label}</p>
+      <div className="rounded-xl shadow-lg p-3 text-sm" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
+        <p className="font-semibold mb-2" style={{ color: 'var(--color-text-contrast)' }}>{label}</p>
         {payload.map((entry: any) => (
           <div key={entry.name} className="flex items-center gap-2">
             <span
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-slate-500 capitalize">{entry.name}:</span>
+            <span className="capitalize" style={{ color: 'var(--color-text-secondary)' }}>{entry.name}:</span>
             <span className="font-semibold" style={{ color: entry.color }}>
               {formatCLP(entry.value, true)}
             </span>
@@ -46,20 +46,20 @@ export default function FinancialChartCard({ data, title = 'Evolución ingresos 
   return (
     <div className={`card p-5 ${className || ''}`}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-slate-800">{title}</h3>
-        <span className="text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">Últimos 6 meses</span>
+        <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>{title}</h3>
+        <span className="text-xs px-2 py-1 rounded-lg" style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-app-bg)' }}>Últimos 6 meses</span>
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-app-bg)" />
           <XAxis
             dataKey="mes"
-            tick={{ fontSize: 11, fill: '#94a3b8' }}
+            tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
-            tick={{ fontSize: 11, fill: '#94a3b8' }}
+            tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) => formatCLP(v, true)}
@@ -69,23 +69,23 @@ export default function FinancialChartCard({ data, title = 'Evolución ingresos 
           <Legend
             wrapperStyle={{ fontSize: '12px', paddingTop: '12px' }}
             formatter={(value) => (
-              <span style={{ color: '#64748b', textTransform: 'capitalize' }}>{value}</span>
+              <span style={{ color: 'var(--color-text-secondary)', textTransform: 'capitalize' }}>{value}</span>
             )}
           />
           <Line
             type="monotone"
             dataKey="ingresos"
-            stroke="#2563eb"
+            stroke="var(--color-accent)"
             strokeWidth={2.5}
-            dot={{ fill: '#2563eb', r: 4 }}
+            dot={{ fill: 'var(--color-accent)', r: 4 }}
             activeDot={{ r: 6 }}
           />
           <Line
             type="monotone"
             dataKey="gastos"
-            stroke="#16a34a"
+            stroke="var(--color-expense)"
             strokeWidth={2.5}
-            dot={{ fill: '#16a34a', r: 4 }}
+            dot={{ fill: 'var(--color-expense)', r: 4 }}
             activeDot={{ r: 6 }}
           />
         </LineChart>
