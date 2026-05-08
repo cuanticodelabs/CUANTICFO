@@ -25,7 +25,8 @@
       "Bash(curl *)",
       "Bash(xxd)",
       "mcp__n8n-mcp__execute_workflow",
-      "mcp__n8n-mcp__get_execution"
+      "mcp__n8n-mcp__get_execution",
+      "Bash(python3 -c \"import json,sys; wf=json.load\\(sys.stdin\\); node=[n for n in wf['nodes'] if n['name']=='Verificar Periodo Cerrado Ingreso'][0]; print\\('credentials:', node.get\\('credentials'\\)\\); print\\('query:', node['parameters']['query']\\)\")"
     ]
   },
   "enableAllProjectMcpServers": true,

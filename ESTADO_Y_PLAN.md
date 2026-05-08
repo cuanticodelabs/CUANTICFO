@@ -1,27 +1,51 @@
 # CuantiCFO — Estado y Plan de Trabajo
-> Fecha: 2026-05-08
-> Sesión pausada — retomar desde "Acciones inmediatas"
+> Actualizado: 2026-05-08 — sesión pausada para instalar MongoDB MCP server
 
 ---
 
 ## 1. Estado actual
 
-### ✅ Hecho
+### ✅ Hecho (acumulado)
 
 **Backend n8n (10/10 workflows desplegados y `active: true`):**
 
 | ID | Nombre | Path real | Status |
 |----|--------|-----------|--------|
-| FuBWjEkWlhnEyhAH | WF-01 Crear Ingreso | `/webhook/cfo/create-income` | 🔴 bug MongoDB |
-| 5QMoHUTv6glUIkY0 | WF-02 Crear Gasto | `/webhook/cfo/create-expense` | 🔴 bug MongoDB |
-| 09HgImKWIwT3n375 | WF-03 Registrar Respaldo | `/webhook/cfo/register-document` | 🔴 bug MongoDB |
-| e92rvl1FAKvVxxpa | WF-04 Generar Libro Compras | `/webhook/cfo/generate-purchase-book` | 🔴 bug MongoDB |
-| UqUsOJTUyS7VMpfh | WF-05 Generar Libro Ventas | `/webhook/cfo/generate-sales-book` | 🔴 bug MongoDB |
-| LmVKik7JXtS2wtb8 | WF-06 Preparar F29 | `/webhook/cfo/prepare-f29` | 🔴 bug MongoDB |
+| FuBWjEkWlhnEyhAH | WF-01 Crear Ingreso | `/webhook/cfo/create-income` | 🟡 fix aplicado, pendiente smoke test |
+| 5QMoHUTv6glUIkY0 | WF-02 Crear Gasto | `/webhook/cfo/create-expense` | 🟡 fix aplicado, pendiente smoke test |
+| 09HgImKWIwT3n375 | WF-03 Registrar Respaldo | `/webhook/cfo/register-document` | 🟡 fix aplicado, pendiente smoke test |
+| e92rvl1FAKvVxxpa | WF-04 Generar Libro Compras | `/webhook/cfo/generate-purchase-book` | 🟡 fix aplicado, pendiente smoke test |
+| UqUsOJTUyS7VMpfh | WF-05 Generar Libro Ventas | `/webhook/cfo/generate-sales-book` | 🟡 fix aplicado, pendiente smoke test |
+| LmVKik7JXtS2wtb8 | WF-06 Preparar F29 | `/webhook/cfo/prepare-f29` | 🟡 fix aplicado, pendiente smoke test |
 | 9LMlUa77LwgMxY5v | WF-07 Reporte Mensual CFO | (scheduled + email) | ⚠️ no validado |
 | Rt0xdGNGHdCO6nSl | WF-08 Alertas Diarias | (scheduled 9am) | ⚠️ no validado |
-| uOTzMhWIGzZhifFb | WF-09 Cierre Mensual | `/webhook/cfo/close-period` | 🔴 bug MongoDB |
+| uOTzMhWIGzZhifFb | WF-09 Cierre Mensual | `/webhook/cfo/close-period` | 🟡 fix aplicado, pendiente smoke test |
 | TAeiG6Y9JX4XvP2v | WF-10 Error Handler Global | (error workflow) | ⚠️ no validado |
+
+**Fixes aplicados vía REST API en esta sesión:**
+
+1. **Bug #1 — `JSON.stringify` en todas las queries MongoDB** (13 nodos, 8 workflows)
+   - Patrón antiguo: `={{ { "campo": $json.campo } }}`
+   - Patrón nuevo: `={{ JSON.stringify({ "campo": $json.campo }) }}`
+   - Nodos corregidos: `Verificar Periodo Cerrado Ingreso` (WF-01), `Verificar Periodo Cerrado Gasto` (WF-02), `Consultar Gastos del Periodo` (WF-04, limit 0), `Consultar Ingresos del Periodo` (WF-05, limit 0), `Consultar Empresa` + `Consultar Ingresos F29` + `Consultar Gastos F29` (WF-06, limit 0), `Verificar Estado Periodo` + `Consultar Ingresos Snapshot` + `Consultar Gastos Snapshot` + `Consultar Impuesto Snapshot` (WF-09), + 5 nodos WF-07 detectados en el scan automático.
+
+2. **Bug #2 — `crypto is not defined`** (Code nodes en task runner sandbox)
+   - Helper UUID puro añadido a todos los nodos Code afectados:
+     ```javascript
+     const randomUUID=()=>'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16)});
+     ```
+
+3. **Bug #3 — MongoDB schema validation error 121** (identificado, fix preparado, PENDIENTE aplicar)
+   - Causa: schema define `bsonType: "decimal"` para campos monetarios pero n8n envía BSON double (número JS).
+   - Fix preparado en `apply_schema_updates.mongo.js`: cambia todos los campos monetarios a `["int", "long", "double", "decimal"]`.
+   - **⚠️ ESTE SCRIPT AÚN NO SE HA APLICADO A LA BASE DE DATOS.**
+
+4. **WF-02 `Preparar Alerta Respaldo`** — añadido campo `updated_at: now` (requería schema).
+5. **WF-09 `Preparar Cierre Doc`** — añadido campo `created_at: now` (requería schema).
+
+**Archivos de schema actualizados:**
+- `cuanticfo_schema.mongo.js` — versión actualizada con tipos numéricos flexibles en todas las colecciones.
+- `apply_schema_updates.mongo.js` — script `collMod` listo para correr con `mongosh`. Cubre: ingresos, gastos, libros_mensuales, impuestos_mensuales, cierres_mensuales, alertas, workflow_logs, empresas.
 
 **Credenciales n8n configuradas:**
 - `46gn4G4PPnyDFwSy` — MongoDB CUANTICFO ✅
@@ -39,118 +63,80 @@
 - `cuanticfo/src/services/finance.service.ts` — 13 funciones (12 mock + 1 real: `createGasto`) ✅
 - `cuanticfo/src/app/api/finance/gastos/route.ts` — única ruta API conectada ✅
 
-**Documentación:**
-- `API_CONTRACTS.md` (8 endpoints)
-- `N8N_WORKFLOWS.md`
-- `cuanticfo_schema.mongo.js` (14 colecciones)
-- `AUDITORIA_CONSISTENCIA.md`
-
 ---
 
-## 2. Hallazgos clave de esta sesión
+## 2. Hallazgos clave (histórico)
 
-### 🔴 BUG CRÍTICO: queries MongoDB rotos en TODOS los workflows
+### 🔴 BUG #1 — MongoDB `JSON.parse("[object Object]")` — CORREGIDO
 
-**Síntoma:** los webhooks responden HTTP 200 pero con body vacío (`Content-Length: 0`).
+El nodo MongoDB v1.2 hace `JSON.parse(query)` internamente. Expresiones `={{ { ... } }}` producen un objeto JS → `.toString()` = `"[object Object]"` → `JSON.parse` falla → workflow cae al errorWorkflow → cliente recibe 200 vacío. Fix: `JSON.stringify()` en todos los queries.
 
-**Causa raíz (confirmada por execución MCP de WF-01, executionId 15170):**
-El nodo MongoDB v1.2 hace `JSON.parse(query)` internamente. Los queries están escritos así:
+### 🔴 BUG #2 — `crypto is not defined` — CORREGIDO
 
-```
-={{ { "empresa_id": $json.empresa_id, "periodo": $json.periodo, "cerrado": true } }}
-```
+n8n task runner sandbox no expone `crypto` global. Fix: UUID v4 en puro JS (sin dependencias).
 
-Esto evalúa a un **objeto JS**, no a un string JSON. Al hacer `.toString()` produce `"[object Object]"` → `JSON.parse` falla → workflow se cae al `errorWorkflow` (TAeiG6Y9JX4XvP2v) → el nodo `Respond to Webhook` jamás se ejecuta → cliente recibe 200 con body vacío.
+### 🔴 BUG #3 — MongoDB schema validation code 121 — FIX PREPARADO, PENDIENTE APLICAR
 
-**Stack trace del error:**
-```
-SyntaxError: "[object Object]" is not valid JSON
-  at JSON.parse (<anonymous>)
-  at MongoDb.node.ts:185:35
-```
+Schema exige `bsonType: "decimal"` para campos monetarios pero n8n enviá BSON double. Primer error observado: executionId 15742, nodo `Insertar Ingreso en BD`. El script `apply_schema_updates.mongo.js` relaja todos los tipos a `["int", "long", "double", "decimal"]`.
 
-**Fix:** wrap todos los queries con `JSON.stringify()`. Patrón correcto:
-```
-={{ JSON.stringify({ "empresa_id": $json.empresa_id, "periodo": $json.periodo }) }}
-```
-
-**Workflows afectados** (todos los que tienen nodo MongoDB con `query`):
-- WF-01: nodo `Verificar Periodo Cerrado Ingreso`
-- WF-02: nodo `Verificar Periodo Cerrado Gasto`
-- WF-04: nodo `Consultar Gastos del Periodo`
-- WF-05: nodo `Consultar Ingresos del Periodo`
-- WF-06: nodos `Consultar Empresa`, `Consultar Ingresos F29`, `Consultar Gastos F29`
-- WF-09: nodos `Verificar Estado Periodo`, `Consultar Ingresos Snapshot`, `Consultar Gastos Snapshot`, `Consultar Impuesto Snapshot`
-- WF-08: probablemente también (no validado)
-- WF-03 no usa `query` find (solo update por `_id`), debería estar OK pero hay que verificar.
-
-### 🟠 Discrepancias en API_CONTRACTS.md vs workflows reales
+### 🟠 Discrepancias API_CONTRACTS.md vs workflows reales
 
 | Endpoint | API_CONTRACTS dice | Workflow real |
 |----------|---------------------|---------------|
-| WF-03 | `/upload-document` con `tipo_uso`, `nombre_archivo`, `mime_type` | `/register-document` con `tabla` (`ingresos`/`gastos`), `referencia_id`, `archivo_url` |
+| WF-03 | `/upload-document` con `tipo_uso`, `nombre_archivo`, `mime_type` | `/register-document` con `tabla`, `referencia_id`, `archivo_url` |
 | WF-09 | `/close-month` con `notas_cierre` | `/close-period` con `cerrado_por` |
-| WF-09 | Valida `CHECKLIST_INCOMPLETO` y `ALERTAS_CRITICAS_PENDIENTES` | Solo verifica si periodo ya está cerrado (`PERIODO_YA_CERRADO`) |
 
-→ Cuando se cableen las rutas API, **usar los paths/contratos reales del workflow**, no los de la documentación.
-→ Después actualizar `API_CONTRACTS.md` para reflejar realidad.
+→ Usar paths/contratos reales del workflow al cablear rutas API, luego actualizar `API_CONTRACTS.md`.
 
-### 🟡 Seed MongoDB no verificado
+### 🟡 Seed MongoDB NO realizado
 
-- Empresa demo `_id: "11111111-1111-1111-1111-111111111111"` se asume en `gastos/route.ts` pero NO se confirmó que existe en MongoDB.
-- WF-06 (Preparar F29) consulta esta empresa — si no existe, falla incluso después de arreglar los queries.
-- Tampoco se verificó si las colecciones del schema están aplicadas (`cuanticfo_schema.mongo.js`).
+- Empresa demo `_id: "11111111-1111-1111-1111-111111111111"` asumida pero NO confirmada en BD.
+- Colecciones creadas con schema pero sin datos reales.
 
 ### 🟡 `.env.local` desactualizado
 
-```env
-# Supabase (cuando esté listo)         ← muerto, eliminar
-# NEXT_PUBLIC_SUPABASE_URL=
-# NEXT_PUBLIC_SUPABASE_ANON_KEY=
-# SUPABASE_SERVICE_ROLE_KEY=
-```
-
-Falta `MONGODB_URI` para la ruta `/api/dashboard` que lee MongoDB directo.
+- Tiene líneas muertas de Supabase.
+- Falta `MONGODB_URI` para rutas API que lean MongoDB directamente.
 
 ---
 
-## 3. Plan detallado (orden propuesto)
+## 3. Plan detallado
 
-### FASE 0 — Prerrequisitos (estimado 1-1.5h)
+### FASE 0 — Prerrequisitos (próxima sesión — MongoDB MCP disponible)
 
-1. **Arreglar queries MongoDB en los 10 workflows.**
-   Usar `mcp__n8n-mcp__update_workflow` (o el editor n8n) para wrappear cada query en `JSON.stringify()`.
-   Validar uno por uno con `mcp__n8n-mcp__execute_workflow` + `get_execution`.
+1. **Aplicar schema validators** — ejecutar `apply_schema_updates.mongo.js`:
+   ```bash
+   mongosh "MONGODB_URI/cuanticfo" apply_schema_updates.mongo.js
+   ```
+   O vía MongoDB MCP si está disponible.
 
-2. **Verificar/seedear MongoDB.**
-   - Confirmar que las 14 colecciones de `cuanticfo_schema.mongo.js` están aplicadas.
+2. **Seedear MongoDB:**
    - Insertar empresa demo:
      ```js
      {
        _id: "11111111-1111-1111-1111-111111111111",
        razon_social: "CuantiCode Labs SpA",
        rut: "77.222.333-4",
-       tasa_ppm: NumberDecimal("0.0125"),
+       tasa_ppm: 0.0125,
        activa: true,
        email_contador: "jzapata@cuanticode.com",
        created_at: new Date(),
        updated_at: new Date()
      }
      ```
-   - Insertar 5-6 categorías base en `categorias_contables` (infraestructura, marketing, sueldos, servicios profesionales, software, otros).
+   - Insertar categorías base en `categorias_contables` (infraestructura, marketing, sueldos, servicios_profesionales, software, otros).
 
-3. **Smoke test end-to-end** con curl/PowerShell o ejecución directa vía MCP:
-   - WF-06 → debe responder JSON con `iva_debito`, `iva_credito`, etc.
-   - WF-04, WF-05 → libros vacíos pero respuesta 200 con totales en cero.
-   - WF-01, WF-02 → crear ingreso/gasto de prueba y verificar inserción.
+3. **Smoke test end-to-end** de los 6 webhooks con payloads reales:
+   - WF-01 (`/create-income`), WF-02 (`/create-expense`), WF-04, WF-05, WF-06 (`/prepare-f29`), WF-09 (`/close-period`)
+   - Esperar `success` en la ejecución y JSON real en la respuesta (no body vacío).
 
 ### FASE 1 — Rutas API Next.js (estimado 2-3h)
 
-Replicar el patrón de `cuanticfo/src/app/api/finance/gastos/route.ts` en cada nuevo endpoint. Inyectar `EMPRESA_ID` server-side (TODO: cambiar por sesión cuando haya auth).
+Patrón: replicar `cuanticfo/src/app/api/finance/gastos/route.ts`.
 
 | # | Ruta | Workflow | Path n8n | Notas |
 |---|------|----------|----------|-------|
-| 1 | `POST /api/finance/incomes` | WF-01 | `/create-income` | Validar neto+iva+exento==total |
+| 1 | `POST /api/finance/incomes` | WF-01 | `/create-income` | |
 | 2 | `POST /api/finance/documents` | WF-03 | `/register-document` | Body: `{tabla, referencia_id, archivo_url}` |
 | 3 | `POST /api/books/purchases` | WF-04 | `/generate-purchase-book` | Body: `{periodo}` |
 | 4 | `POST /api/books/sales` | WF-05 | `/generate-sales-book` | Body: `{periodo}` |
@@ -160,137 +146,131 @@ Replicar el patrón de `cuanticfo/src/app/api/finance/gastos/route.ts` en cada n
 
 ### FASE 2 — Migrar `finance.service.ts` (estimado 1h)
 
-Reemplazar las 12 funciones mock por fetch a las rutas `/api/*`:
-- `getEmpresa`, `getUsuario` → `GET /api/empresa` (nuevo endpoint, lectura directa Mongo)
-- `getDashboardKpis`, `getChartData`, `getDistribucionGastos`, `getCuentasBancarias`, `getCuentasPorCobrar`, `getCuentasPorPagar`, `getUltimosMovimientos` → derivados de `GET /api/dashboard`
-- `getMovimientos`, `getIngresos`, `getGastos` → nuevos endpoints `GET /api/finance/incomes`, `GET /api/finance/expenses` (lectura directa Mongo)
-- `getAlertas` → `GET /api/alertas` (lectura directa)
-- `getImpuestoMensual`, `getCierreMensual` → `GET /api/taxes/f29?periodo=...` y `GET /api/closing/monthly?periodo=...`
-- `getEstadoResultados`, `getEstadoResultadosHistorico`, `getFlujoCaja` → derivados o nuevos endpoints
+Reemplazar las 12 funciones mock por fetch a rutas `/api/*`:
+- `getDashboardKpis`, `getChartData`, etc. → `GET /api/dashboard`
+- `getIngresos`, `getGastos`, `getMovimientos` → nuevos GET endpoints (lectura directa Mongo)
+- `getAlertas` → `GET /api/alertas`
+- `getImpuestoMensual` → `GET /api/taxes/f29?periodo=...`
+- `getCierreMensual` → `GET /api/closing/monthly?periodo=...`
 
-Mantener tipos. Conservar las funciones mock como fallback opcional con `process.env.NEXT_PUBLIC_USE_MOCK`.
+Mantener tipos. Conservar mock como fallback con `process.env.NEXT_PUBLIC_USE_MOCK`.
 
-### FASE 3 — Limpieza y env (estimado 15 min)
+### FASE 3 — Limpieza y env (15 min)
 
 - `.env.local`: eliminar refs a Supabase, agregar `MONGODB_URI`.
 - Actualizar `API_CONTRACTS.md` con paths/contratos reales.
-- Actualizar `Contratos_integracion.txt` también.
 
-### FASE 4 — Frentes diferidos (no bloquean MVP funcional)
+### FASE 4 — Diferido (no bloquea MVP)
 
-- **Auth + multi-empresa**: NextAuth.js, eliminar `EMPRESA_ID` hardcoded, selector real de empresa.
-- **Object Storage**: bucket R2/Cloudinary, endpoint de upload, conectar con WF-03.
-- **WF-07, WF-08, WF-10**: validar que ejecuten correctamente cuando hay datos reales.
+- Auth + multi-empresa: NextAuth.js, eliminar `EMPRESA_ID` hardcoded.
+- Object Storage: bucket R2/Cloudinary, conectar con WF-03.
+- WF-07, WF-08, WF-10: validar con datos reales.
 
 ---
 
 ## 4. Acciones inmediatas al retomar
 
-> Ejecutar en este orden exacto:
+> Ejecutar en este orden exacto (MongoDB MCP ya debe estar configurado):
 
-### Paso 1 — Arreglar workflows (~30 min)
+### Paso 1 — Aplicar schema validators
 
-1. Abrir cada workflow en n8n.cuanticode.com (o usar `mcp__n8n-mcp__update_workflow`).
-2. Para cada nodo MongoDB con campo `query`, reemplazar:
-   ```
-   ={{ { "campo": $json.campo } }}
-   ```
-   por:
-   ```
-   ={{ JSON.stringify({ "campo": $json.campo }) }}
-   ```
-3. Lista exacta de nodos a editar (workflow → nodo):
-   - WF-01 (FuBWjEkWlhnEyhAH) → `Verificar Periodo Cerrado Ingreso`
-   - WF-02 (5QMoHUTv6glUIkY0) → `Verificar Periodo Cerrado Gasto`
-   - WF-04 (e92rvl1FAKvVxxpa) → `Consultar Gastos del Periodo`
-   - WF-05 (UqUsOJTUyS7VMpfh) → `Consultar Ingresos del Periodo`
-   - WF-06 (LmVKik7JXtS2wtb8) → `Consultar Empresa`, `Consultar Ingresos F29`, `Consultar Gastos F29`
-   - WF-09 (uOTzMhWIGzZhifFb) → `Verificar Estado Periodo`, `Consultar Ingresos Snapshot`, `Consultar Gastos Snapshot`, `Consultar Impuesto Snapshot`
-   - WF-08 (Rt0xdGNGHdCO6nSl) → revisar y arreglar.
-   - WF-03 (09HgImKWIwT3n375) → no tiene `query find` (solo updates por _id), validar que funcione.
-
-### Paso 2 — Validar fix con execución MCP
-
-```
-mcp__n8n-mcp__execute_workflow workflowId=LmVKik7JXtS2wtb8 inputs=...
-mcp__n8n-mcp__get_execution executionId=<nuevo>
-```
-
-Esperar status `success` y body con datos reales.
-
-### Paso 3 — Seed MongoDB
-
-Conectarse a MongoDB Atlas / self-hosted con `mongosh` o crear script Node:
 ```bash
-node cuanticfo/scripts/seed-empresa-demo.js
+# Opción A: desde terminal
+mongosh "mongodb+srv://..." apply_schema_updates.mongo.js
+
+# Opción B: vía MongoDB MCP si está disponible
 ```
-(El script todavía no existe — crear en sesión nueva.)
 
-### Paso 4 — Smoke test end-to-end completo
+Verificar que el `print("Validadores actualizados correctamente.")` al final no lance errores.
 
-Probar los 6 webhooks con payloads reales (PowerShell `Invoke-WebRequest`).
+### Paso 2 — Seed empresa demo + categorías
+
+Insertar empresa `11111111-1111-1111-1111-111111111111` y 6 categorías en `categorias_contables`.
+
+### Paso 3 — Smoke test WF-01 (crear ingreso)
+
+```powershell
+$headers = @{ "X-CFO-Secret" = "AKJfGwQRSJYOzZd68bPu-lkUbdumjkBFynxzskkjDx_wwlmX"; "Content-Type" = "application/json" }
+$body = @{
+  empresa_id = "11111111-1111-1111-1111-111111111111"
+  periodo    = "2026-04"
+  fecha_emision = "2026-04-15"
+  cliente    = "Cliente Demo"
+  tipo_documento = "factura_afecta"
+  neto   = 100000
+  iva    = 19000
+  exento = 0
+  total  = 119000
+  estado_cobro = "pendiente"
+} | ConvertTo-Json
+Invoke-WebRequest -Uri "https://cuanticode.com/webhook/cfo/create-income" -Method POST -Headers $headers -Body $body
+```
+
+Esperar status 200 con `{ "ok": true, "ingreso_id": "..." }`.
+
+### Paso 4 — Smoke test WF-06 (F29)
+
+```powershell
+$body = @{ empresa_id = "11111111-1111-1111-1111-111111111111"; periodo = "2026-04" } | ConvertTo-Json
+Invoke-WebRequest -Uri "https://cuanticode.com/webhook/cfo/prepare-f29" -Method POST -Headers $headers -Body $body
+```
+
+Esperar JSON con `iva_debito`, `iva_credito`, `iva_a_pagar`.
 
 ### Paso 5 — Empezar Fase 1 (rutas API)
 
-Comenzar por `POST /api/finance/incomes` que es el más simétrico al ya existente de gastos.
+Comenzar por `POST /api/finance/incomes` (simétrico al ya existente `gastos/route.ts`).
 
 ---
 
-## 5. Mapeo de tasks (sesión actual)
+## 5. Tasks
 
 ```
-#1 [in_progress] Smoke test de los 10 workflows n8n
-   → DESCUBRIMIENTO: bug sistémico MongoDB JSON.parse
-   → Pendiente: validar fix después de arreglar workflows
-
-#2 [pending] Verificar seed MongoDB (empresa demo + categorías)
-#3 [pending] Crear ruta /api/finance/incomes (WF-01)
-#4 [pending] Crear ruta /api/finance/documents (WF-03)
-#5 [pending] Crear rutas /api/books/purchases y /api/books/sales (WF-04, WF-05)
-#6 [pending] Crear ruta /api/taxes/f29 (WF-06)
-#7 [pending] Crear ruta /api/closing/monthly (WF-09)
-#8 [pending] Crear ruta GET /api/dashboard (lectura directa MongoDB)
-#9 [pending] Migrar finance.service.ts de mock a HTTP real
-#10 [pending] Limpiar .env.local (eliminar Supabase, agregar MONGODB_URI)
-```
-
-**Task nueva a crear al retomar:**
-```
-#11 Arreglar bug JSON.parse en queries MongoDB de los 10 workflows
-   (debe completarse antes de #2 y de cualquier ruta API)
+#1 [done]     Descubrir y diagnosticar bug JSON.parse en MongoDB nodes
+#2 [done]     Aplicar JSON.stringify fix en los 10 workflows vía REST API
+#3 [done]     Aplicar fix crypto.randomUUID en todos los Code nodes
+#4 [done]     Preparar script apply_schema_updates.mongo.js
+#5 [pending]  Aplicar schema validators a MongoDB (requiere MongoDB MCP o mongosh)
+#6 [pending]  Seed empresa demo + categorías en MongoDB
+#7 [pending]  Smoke test end-to-end WF-01, 02, 04, 05, 06, 09
+#8 [pending]  Crear ruta POST /api/finance/incomes (WF-01)
+#9 [pending]  Crear ruta POST /api/finance/documents (WF-03)
+#10 [pending] Crear rutas POST /api/books/{purchases,sales} (WF-04, WF-05)
+#11 [pending] Crear ruta POST /api/taxes/f29 (WF-06)
+#12 [pending] Crear ruta POST /api/closing/monthly (WF-09)
+#13 [pending] Crear ruta GET /api/dashboard (lectura directa MongoDB)
+#14 [pending] Migrar finance.service.ts de mock a HTTP real
+#15 [pending] Limpiar .env.local (eliminar Supabase, agregar MONGODB_URI)
 ```
 
 ---
 
-## 6. Datos de referencia para retomar
+## 6. Datos de referencia
 
 **Auth n8n:**
 - Header: `X-CFO-Secret`
 - Valor: `AKJfGwQRSJYOzZd68bPu-lkUbdumjkBFynxzskkjDx_wwlmX`
 
-**Empresa demo (asumida, NO confirmada):**
+**Empresa demo:**
 - `_id`: `11111111-1111-1111-1111-111111111111`
+- `razon_social`: CuantiCode Labs SpA
+- `rut`: 77.222.333-4
 
-**API Public Key n8n** (para listar workflows/credenciales):
+**API Public Key n8n:**
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyYTEyN2MwMy00Yzg0LTRjZTMtOGEyNy0yY2U3MGFkODkxMmEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiM2RkYTAxZTYtZGE2MS00ZmQ3LTk0MWQtZTU3N2FjYWI3MmM4IiwiaWF0IjoxNzc4MTA1MzcwfQ.9LWnBV-bxYHR85IOaqtPTtvKafSebvnGud65di_OaRg
 ```
 
 **MongoDB:**
 - Credencial n8n: `46gn4G4PPnyDFwSy` (MongoDB CUANTICFO)
-- Connection string: en n8n env `MONGODB_URI` (no replicado en `.env.local` aún)
 - DB: `cuanticfo`
+- URI: en n8n env `MONGODB_URI` (no replicado en `.env.local` aún)
 
-**Próximo commit sugerido (cuando termine FASE 1):**
+**Próximo commit sugerido (después de smoke test exitoso):**
 ```
-feat(api): conectar 7 rutas API Next.js a workflows n8n
+fix(n8n): corregir queries MongoDB y UUID en los 10 workflows
 
-- POST /api/finance/incomes → WF-01
-- POST /api/finance/documents → WF-03 (path: register-document)
-- POST /api/books/{purchases,sales} → WF-04, WF-05
-- POST /api/taxes/f29 → WF-06
-- POST /api/closing/monthly → WF-09 (path: close-period)
-- GET  /api/dashboard → lectura directa MongoDB
-
-Closes ESTADO_Y_PLAN.md FASE 1.
+- JSON.stringify en 13 nodos MongoDB query (bug JSON.parse)  
+- UUID v4 puro en todos los Code nodes (bug crypto sandbox)
+- Relajar bsonType monetario a ["int","long","double","decimal"]
 ```
