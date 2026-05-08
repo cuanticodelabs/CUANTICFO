@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils/format';
 import type { CierreMensual } from '@/lib/types';
-import { Check, Clock, Lock } from 'lucide-react';
+import { Check, Lock } from 'lucide-react';
 
 interface ChecklistItem {
   label: string;
@@ -39,10 +39,22 @@ export default function ClosePeriodChecklist({
   return (
     <div className={cn('card p-5', className)}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Checklist cierre mensual</h3>
+        <h3
+          className="text-sm font-semibold"
+          style={{ color: 'var(--color-text-primary)' }}
+        >
+          Checklist cierre mensual
+        </h3>
         {cierre.cerrado && (
-          <span className="flex items-center gap-1 text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-1 rounded-full">
-            <Lock size={11} /> Cerrado
+          <span
+            className="flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full"
+            style={{
+              color: 'var(--color-income)',
+              backgroundColor: 'var(--color-income-tint)',
+              border: '1px solid rgba(74,222,128,0.2)',
+            }}
+          >
+            <Lock size={10} /> Cerrado
           </span>
         )}
       </div>
@@ -53,7 +65,9 @@ export default function ClosePeriodChecklist({
           <svg viewBox="0 0 36 36" className="w-16 h-16 -rotate-90">
             <circle cx="18" cy="18" r="15" fill="none" stroke="var(--color-border)" strokeWidth="3" />
             <circle
-              cx="18" cy="18" r="15"
+              cx="18"
+              cy="18"
+              r="15"
               fill="none"
               stroke={pct === 100 ? 'var(--color-income)' : 'var(--color-accent)'}
               strokeWidth="3"
@@ -63,12 +77,24 @@ export default function ClosePeriodChecklist({
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>{pct}%</span>
+            <span
+              className="text-sm font-bold tabular"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              {pct}%
+            </span>
           </div>
         </div>
         <div>
-          <p className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{completed} de {total}</p>
-          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>completadas</p>
+          <p
+            className="text-xl font-bold tabular"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            {completed} de {total}
+          </p>
+          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+            completadas
+          </p>
         </div>
       </div>
 
@@ -78,22 +104,35 @@ export default function ClosePeriodChecklist({
           const done = !!cierre[item.key];
           return (
             <button
+              type="button"
               key={item.key}
               onClick={() => onToggle?.(item.key, !done)}
-              className="w-full flex items-center gap-2.5 text-left hover:bg-slate-50 px-1.5 py-1 rounded-lg transition-colors"
+              className="w-full flex items-center gap-2.5 text-left px-1.5 py-1 rounded-lg transition-colors cursor-pointer"
+              style={{ backgroundColor: 'transparent' }}
             >
               <div
-                className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition-colors"
+                className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
                 style={{
-                  backgroundColor: done ? 'var(--color-income)' : 'var(--color-card)',
-                  borderColor: done ? 'var(--color-income)' : 'var(--color-border)',
+                  backgroundColor: done ? 'var(--color-income)' : 'transparent',
+                  border: `1.5px solid ${done ? 'var(--color-income)' : 'var(--color-border-strong)'}`,
                 }}
               >
-                {done && <Check size={11} className="text-white" strokeWidth={3} />}
+                {done && (
+                  <Check
+                    size={11}
+                    strokeWidth={3}
+                    style={{ color: 'var(--color-app-bg)' }}
+                  />
+                )}
               </div>
               <span
                 className="text-sm flex-1"
-                style={{ color: done ? 'var(--color-text-muted)' : 'var(--color-text-contrast)', textDecoration: done ? 'line-through' : 'none' }}
+                style={{
+                  color: done
+                    ? 'var(--color-text-muted)'
+                    : 'var(--color-text-secondary)',
+                  textDecoration: done ? 'line-through' : 'none',
+                }}
               >
                 {item.label}
               </span>

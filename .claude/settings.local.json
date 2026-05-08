@@ -15,7 +15,12 @@
       "Bash(New-Item -ItemType Directory -Force -Path \"E:\\\\Proyectos\\\\CUANTICFO\\\\cuanticfo\\\\.impeccable\")",
       "Bash(Out-Null)",
       "Bash(Write-Output \"done\")",
-      "Bash(npm uninstall *)"
+      "Bash(npm uninstall *)",
+      "Bash(python *)",
+      "Bash(npx eslint *)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(npx next *)",
+      "Bash(echo \"TSC=$?\")"
     ]
   },
   "enableAllProjectMcpServers": true,

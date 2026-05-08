@@ -16,7 +16,14 @@ export default function AppShell({ children, title, subtitle }: AppShellProps) {
   const [periodo, setPeriodo] = useState(mockPeriodo);
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: 'var(--color-app-bg)' }}>
+    <div
+      className="flex h-screen overflow-hidden"
+      style={{ backgroundColor: 'var(--color-app-bg)' }}
+    >
+      <a href="#main-content" className="skip-link">
+        Saltar al contenido principal
+      </a>
+
       {/* Desktop Sidebar */}
       <Sidebar />
 
@@ -28,10 +35,12 @@ export default function AppShell({ children, title, subtitle }: AppShellProps) {
           title={title}
           subtitle={subtitle}
         />
-        <main className="flex-1 overflow-y-auto pb-16 md:pb-0">
-          <div className="max-w-[1440px] mx-auto">
-            {children}
-          </div>
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto pb-16 md:pb-0 focus:outline-none"
+        >
+          <div className="max-w-[1440px] mx-auto">{children}</div>
         </main>
       </div>
 

@@ -16,13 +16,16 @@ import {
   BarChart2,
   Droplets,
   Bell,
-  CheckSquare,
   Building2,
   Users,
   Tag,
   Settings,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
+  Target,
+  TrendingUpDown,
+  Gauge,
 } from 'lucide-react';
 import { cn } from '@/lib/utils/format';
 import { mockEmpresa } from '@/lib/mock-data/dashboard';
@@ -40,13 +43,14 @@ interface NavSection {
 
 const navSections: NavSection[] = [
   {
-    title: 'PRINCIPAL',
+    title: 'EXECUTIVE',
     items: [
-      { label: 'Inicio', href: '/dashboard', icon: LayoutDashboard },
+      { label: 'Resumen', href: '/dashboard', icon: LayoutDashboard },
+      { label: 'CFO Asistente', href: '/ai-cfo', icon: Sparkles },
     ],
   },
   {
-    title: 'MOVIMIENTOS',
+    title: 'FLUJOS',
     items: [
       { label: 'Movimientos', href: '/movimientos', icon: ArrowLeftRight },
       { label: 'Ingresos', href: '/ingresos', icon: TrendingUp },
@@ -57,8 +61,8 @@ const navSections: NavSection[] = [
   {
     title: 'CONTABILIDAD',
     items: [
-      { label: 'Libros contables', href: '/libros', icon: BookOpen },
-      { label: 'Cuentas contables', href: '/cuentas', icon: BookMarked },
+      { label: 'Libros', href: '/libros', icon: BookOpen },
+      { label: 'Cuentas', href: '/cuentas', icon: BookMarked },
       { label: 'Cierre mensual', href: '/cierres', icon: Calendar },
     ],
   },
@@ -66,18 +70,21 @@ const navSections: NavSection[] = [
     title: 'IMPUESTOS',
     items: [
       { label: 'Preparador F29', href: '/impuestos/f29', icon: Receipt },
-      { label: 'Impuestos mensuales', href: '/impuestos', icon: BookMarked },
+      { label: 'Mensuales', href: '/impuestos', icon: BookMarked },
     ],
   },
   {
-    title: 'REPORTES',
+    title: 'INTELIGENCIA',
     items: [
       { label: 'Estado de resultados', href: '/reportes/estado-resultados', icon: BarChart2 },
       { label: 'Flujo de caja', href: '/reportes/flujo-caja', icon: Droplets },
+      { label: 'Presupuesto vs real', href: '/reportes/presupuesto', icon: Target },
+      { label: 'Proyecciones', href: '/reportes/proyecciones', icon: TrendingUpDown },
+      { label: 'KPIs', href: '/reportes/kpis', icon: Gauge },
     ],
   },
   {
-    title: 'CONFIGURACIÓN',
+    title: 'AJUSTES',
     items: [
       { label: 'Empresas', href: '/configuracion', icon: Building2 },
       { label: 'Usuarios', href: '/configuracion/usuarios', icon: Users },
@@ -94,18 +101,35 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        'hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 z-30',
-        collapsed ? 'w-16' : 'w-64'
+        'sidebar hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 z-30',
+        collapsed ? 'w-16' : 'w-60'
       )}
-      style={{ backgroundColor: 'var(--color-sidebar)' }}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-white/10">
-        <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-          <BarChart2 size={16} className="text-white" />
+      <div
+        className="flex items-center gap-3 px-4 py-5"
+        style={{ borderBottom: '1px solid var(--color-sidebar-border)' }}
+      >
+        <div
+          className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+          style={{
+            background: 'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%)',
+          }}
+        >
+          <span
+            className="text-[13px] font-bold tracking-tight"
+            style={{ color: 'var(--color-app-bg)' }}
+          >
+            C
+          </span>
         </div>
         {!collapsed && (
-          <span className="text-white font-bold text-lg tracking-tight">CuantiCFO</span>
+          <span
+            className="font-semibold text-[15px] tracking-tight"
+            style={{ color: 'var(--color-sidebar-text)' }}
+          >
+            CuantiCFO
+          </span>
         )}
       </div>
 
@@ -115,17 +139,37 @@ export default function Sidebar() {
           <button
             type="button"
             aria-label={`Empresa activa: ${mockEmpresa.razon_social}. Cambiar empresa`}
-            className="w-full px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left bg-transparent"
+            className="w-full px-3 py-2 rounded-lg transition-colors text-left cursor-pointer"
+            style={{ backgroundColor: 'var(--color-sidebar-hover)' }}
           >
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 bg-blue-700 rounded-md flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                <Building2 size={14} className="text-white" />
+              <div
+                className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: 'var(--color-accent-tint)', color: 'var(--color-accent)' }}
+                aria-hidden="true"
+              >
+                <Building2 size={13} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white text-xs font-semibold truncate">{mockEmpresa.razon_social}</p>
-                <p className="text-blue-300 text-xs truncate">{mockEmpresa.rut}</p>
+                <p
+                  className="text-xs font-semibold truncate"
+                  style={{ color: 'var(--color-sidebar-text)' }}
+                >
+                  {mockEmpresa.razon_social}
+                </p>
+                <p
+                  className="text-[11px] truncate tabular"
+                  style={{ color: 'var(--color-sidebar-text-muted)' }}
+                >
+                  {mockEmpresa.rut}
+                </p>
               </div>
-              <ChevronRight size={14} className="text-white/40 flex-shrink-0" aria-hidden="true" />
+              <ChevronRight
+                size={13}
+                style={{ color: 'var(--color-sidebar-text-muted)' }}
+                className="flex-shrink-0"
+                aria-hidden="true"
+              />
             </div>
           </button>
         </div>
@@ -136,7 +180,10 @@ export default function Sidebar() {
         {navSections.map((section) => (
           <div key={section.title} className="mb-4">
             {!collapsed && (
-              <p className="text-white/30 text-[10px] font-semibold tracking-widest uppercase px-3 mb-1">
+              <p
+                className="text-[10px] font-semibold tracking-[0.12em] uppercase px-3 mb-1.5"
+                style={{ color: 'var(--color-sidebar-text-muted)' }}
+              >
                 {section.title}
               </p>
             )}
@@ -148,17 +195,27 @@ export default function Sidebar() {
                   href={item.href}
                   aria-current={isActive ? 'page' : undefined}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg mb-0.5 transition-all duration-150',
-                    isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'text-white/60 hover:bg-white/8 hover:text-white'
+                    'group relative flex items-center gap-3 px-3 py-2 rounded-lg mb-0.5 transition-colors duration-150 cursor-pointer'
                   )}
+                  style={{
+                    color: isActive
+                      ? 'var(--color-accent)'
+                      : 'var(--color-sidebar-text-muted)',
+                    backgroundColor: isActive ? 'var(--color-sidebar-hover)' : 'transparent',
+                  }}
                   title={collapsed ? item.label : undefined}
                 >
+                  {isActive && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-r-full"
+                      style={{ backgroundColor: 'var(--color-accent)' }}
+                    />
+                  )}
                   <item.icon
-                    size={18}
+                    size={17}
                     aria-hidden="true"
-                    className={cn('flex-shrink-0', isActive ? 'text-white' : 'text-white/60')}
+                    className="flex-shrink-0"
                   />
                   {!collapsed && (
                     <span className="text-sm font-medium truncate">{item.label}</span>
@@ -170,15 +227,32 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Alerts badge */}
+      {/* Alerts banner */}
       {!collapsed && (
         <Link
           href="/alertas"
-          className="mx-3 mb-2 px-3 py-2 rounded-lg bg-red-500/15 border border-red-500/20 flex items-center gap-2 hover:bg-red-500/25 transition-colors"
+          className="mx-3 mb-3 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
+          style={{
+            backgroundColor: 'var(--color-expense-tint)',
+            border: '1px solid rgba(248, 113, 113, 0.18)',
+          }}
         >
-          <Bell size={16} className="text-red-400" />
-          <span className="text-red-300 text-xs font-medium">5 alertas activas</span>
-          <span className="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">5</span>
+          <Bell size={14} style={{ color: 'var(--color-expense)' }} aria-hidden="true" />
+          <span
+            className="text-xs font-medium"
+            style={{ color: 'var(--color-expense)' }}
+          >
+            5 alertas activas
+          </span>
+          <span
+            className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular"
+            style={{
+              backgroundColor: 'var(--color-expense)',
+              color: 'var(--color-app-bg)',
+            }}
+          >
+            5
+          </span>
         </Link>
       )}
 
@@ -187,14 +261,18 @@ export default function Sidebar() {
         onClick={() => setCollapsed(!collapsed)}
         aria-expanded={!collapsed}
         aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
-        className="flex items-center gap-2 px-4 py-3 border-t border-white/10 text-white/40 hover:text-white/70 transition-colors text-sm"
+        className="flex items-center gap-2 px-4 py-3 transition-colors text-sm cursor-pointer"
+        style={{
+          borderTop: '1px solid var(--color-sidebar-border)',
+          color: 'var(--color-sidebar-text-muted)',
+        }}
       >
         {collapsed ? (
-          <ChevronRight size={16} aria-hidden="true" />
+          <ChevronRight size={15} aria-hidden="true" />
         ) : (
           <>
-            <ChevronLeft size={16} aria-hidden="true" />
-            <span aria-hidden="true">Colapsar menú</span>
+            <ChevronLeft size={15} aria-hidden="true" />
+            <span aria-hidden="true">Colapsar</span>
           </>
         )}
       </button>

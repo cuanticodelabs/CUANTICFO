@@ -96,6 +96,19 @@ export const mockDistribucionGastos: DonutDataPoint[] = [
   { name: 'Otros', value: 7, color: '#94a3b8' },
 ];
 
+/**
+ * Distribución de gastos como HBarItem — montos absolutos + variación vs mes anterior.
+ * Usado por HBarList en el Dashboard (reemplaza el donut).
+ */
+export const mockDistribucionGastosBars = [
+  { name: 'Personal',   value: 6_362_500, variation: 4.2,  color: '#2563eb' },
+  { name: 'Tecnología', value: 3_710_000, variation: 31.4, color: '#7c3aed' },
+  { name: 'Servicios',  value: 1_590_000, variation: -2.1, color: '#0ea5e9' },
+  { name: 'Marketing',  value: 1_060_000, variation: 8.0,  color: '#f59e0b' },
+  { name: 'Oficina',    value:   795_000, variation: 0,    color: '#10b981' },
+  { name: 'Otros',      value:   732_500, variation: -5.0, color: '#94a3b8' },
+];
+
 export const mockCuentasBancarias: CuentaBancaria[] = [
   {
     id: '1',

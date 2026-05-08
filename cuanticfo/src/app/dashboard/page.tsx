@@ -1,253 +1,304 @@
 'use client';
 
+import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
-import KpiCard from '@/components/ui/KpiCard';
-import FinancialChartCard from '@/components/ui/FinancialChartCard';
-import TaxSummaryCard from '@/components/ui/TaxSummaryCard';
+import KpiHero from '@/components/ui/KpiHero';
+import KpiCompact from '@/components/ui/KpiCompact';
+import InsightCard from '@/components/ui/InsightCard';
 import AlertCard from '@/components/ui/AlertCard';
 import MovementTable from '@/components/ui/MovementTable';
 import MovementListMobile from '@/components/ui/MovementListMobile';
-import ClosePeriodChecklist from '@/components/ui/ClosePeriodChecklist';
-import DonutChart from '@/components/charts/DonutChart';
-import QuickActionButton from '@/components/ui/QuickActionButton';
-import { formatCLP } from '@/lib/utils/format';
+import FinancialChartCard from '@/components/ui/FinancialChartCard';
+import HBarList from '@/components/charts/HBarList';
 import {
   mockKpis,
   mockChartData,
-  mockDistribucionGastos,
-  mockCuentasBancarias,
+  mockDistribucionGastosBars,
   mockCuentasPorCobrar,
-  mockCuentasPorPagar,
   mockUltimosMovimientos,
   mockEmpresa,
 } from '@/lib/mock-data/dashboard';
-import { mockAlertas, mockImpuesto, mockCierre } from '@/lib/mock-data/alertas';
+import { mockAlertas } from '@/lib/mock-data/alertas';
+import { mockFeaturedInsight } from '@/lib/mock-data/insights';
 import {
-  TrendingUp,
-  TrendingDown,
-  Upload,
-  BookOpen,
-  ShoppingBag,
-  Receipt,
-  BarChart2,
-  Droplets,
-  ExternalLink,
-  Building2,
+  ArrowRight,
+  Download,
+  Plus,
 } from 'lucide-react';
-
-const quickActions = [
-  { label: 'Nuevo ingreso',    href: '/ingresos',                icon: TrendingUp,  color: 'green'  as const },
-  { label: 'Nuevo gasto',      href: '/gastos',                  icon: TrendingDown, color: 'red'   as const },
-  { label: 'Subir documento',  href: '/documentos',              icon: Upload,      color: 'blue'   as const },
-  { label: 'Libro de compras', href: '/libros',                  icon: ShoppingBag, color: 'purple' as const },
-  { label: 'Libro de ventas',  href: '/libros',                  icon: BookOpen,    color: 'orange' as const },
-  { label: 'Preparar F29',     href: '/impuestos/f29',           icon: Receipt,     color: 'blue'   as const },
-  { label: 'Estado de resultados', href: '/reportes/estado-resultados', icon: BarChart2, color: 'gray' as const },
-  { label: 'Flujo de caja',    href: '/reportes/flujo-caja',    icon: Droplets,    color: 'blue'   as const },
-];
 
 export default function DashboardPage() {
   const alertasActivas = mockAlertas.filter((a) => a.estado === 'activa');
+  const topAlertas = alertasActivas.slice(0, 3);
+
+  const kpiResultado = mockKpis.find((k) => k.tipo === 'resultado')!;
+  const kpiCaja = mockKpis.find((k) => k.tipo === 'caja')!;
+  const kpiIngresos = mockKpis.find((k) => k.tipo === 'ingreso')!;
+  const kpiGastos = mockKpis.find((k) => k.tipo === 'gasto')!;
+  const kpiIva = mockKpis.find((k) => k.tipo === 'iva')!;
+
+  const margenPct = (kpiResultado.value / kpiIngresos.value) * 100;
 
   return (
     <AppShell
-      title="Dashboard"
-      subtitle={`Resumen financiero de ${mockEmpresa.razon_social}`}
+      title="Resumen ejecutivo"
+      subtitle={`${mockEmpresa.razon_social} · Abril 2026 · Cierre el 30`}
     >
-      <div className="p-4 md:p-6 animate-fade-in">
-
-        {/* ── KPI SUMMARY ── */}
-        <section>
-          {/* Primary: resultado + caja answer the two core questions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-            {mockKpis
-              .filter((k) => k.tipo === 'resultado' || k.tipo === 'caja')
-              .map((kpi) => (
-                <KpiCard key={kpi.label} kpi={kpi} variant="featured" />
-              ))}
+      <div className="px-4 md:px-8 py-6 md:py-8 animate-fade-in space-y-8">
+        {/* ───────────────────────────────────────────────────────── */}
+        {/* PAGE STATUS + ACTIONS                                      */}
+        {/* ───────────────────────────────────────────────────────── */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div
+            className="flex items-center gap-4 text-xs"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            <span className="flex items-center gap-2">
+              <span
+                className="inline-block w-1.5 h-1.5 rounded-full"
+                style={{ backgroundColor: 'var(--color-warning)' }}
+                aria-hidden="true"
+              />
+              Próxima IVA en{' '}
+              <span
+                className="font-semibold tabular"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                12 días
+              </span>
+            </span>
+            <span style={{ color: 'var(--color-border-strong)' }}>·</span>
+            <span className="flex items-center gap-2">
+              <span
+                className="inline-block w-1.5 h-1.5 rounded-full"
+                style={{ backgroundColor: 'var(--color-expense)' }}
+                aria-hidden="true"
+              />
+              <span className="tabular">{topAlertas.length} alertas activas</span>
+            </span>
           </div>
-          {/* Supporting: ingresos, gastos, IVA — one card, three columns */}
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg cursor-pointer transition-colors"
+              style={{
+                color: 'var(--color-text-secondary)',
+                border: '1px solid var(--color-border)',
+                backgroundColor: 'var(--color-card)',
+              }}
+            >
+              <Download size={13} aria-hidden="true" />
+              Exportar
+            </button>
+            <Link
+              href="/ingresos"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg cursor-pointer transition-colors"
+              style={{
+                color: 'var(--color-app-bg)',
+                background:
+                  'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%)',
+              }}
+            >
+              <Plus size={13} aria-hidden="true" />
+              Nuevo movimiento
+            </Link>
+          </div>
+        </div>
+
+        {/* ───────────────────────────────────────────────────────── */}
+        {/* HERO — the two questions                                   */}
+        {/* ───────────────────────────────────────────────────────── */}
+        <section
+          aria-labelledby="hero-section"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+        >
+          <h2 id="hero-section" className="sr-only">
+            Indicadores principales
+          </h2>
+
+          <KpiHero
+            label="Resultado del mes"
+            value={kpiResultado.value}
+            variacion_pct={kpiResultado.variacion_pct}
+            variacion_label={kpiResultado.variacion_label}
+            sparkline={kpiResultado.sparkline}
+            secondary={{ label: 'Margen', value: `${margenPct.toFixed(0)}%` }}
+            sources={[
+              'Ingresos Abr 2026',
+              'Gastos operacionales Abr 2026',
+              'Cierre Mar 2026',
+            ]}
+          />
+
+          <KpiHero
+            label="Caja disponible"
+            value={kpiCaja.value}
+            variacion_pct={kpiCaja.variacion_pct}
+            variacion_label={kpiCaja.variacion_label}
+            sparkline={kpiCaja.sparkline}
+            secondary={{ label: 'Runway', value: '8,4 meses' }}
+            sources={[
+              'Saldos bancarios al 24/04',
+              'Burn rate promedio 6 meses',
+            ]}
+          />
+        </section>
+
+        {/* ───────────────────────────────────────────────────────── */}
+        {/* COMPACT STRIP — supporting metrics                         */}
+        {/* ───────────────────────────────────────────────────────── */}
+        <section aria-labelledby="supporting-section">
+          <h2 id="supporting-section" className="sr-only">
+            Métricas de apoyo
+          </h2>
           <div className="card overflow-hidden">
-            <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[var(--color-border)]">
-              {mockKpis
-                .filter((k) => k.tipo !== 'resultado' && k.tipo !== 'caja')
-                .map((kpi) => (
-                  <KpiCard key={kpi.label} kpi={kpi} variant="compact" />
-                ))}
+            <div
+              className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x"
+              style={{ borderColor: 'var(--color-border)' }}
+            >
+              <KpiCompact
+                label="Ingresos"
+                value={kpiIngresos.value}
+                variacion_pct={kpiIngresos.variacion_pct}
+                variacion_label="vs Mar"
+                goodDirection="up"
+              />
+              <KpiCompact
+                label="Gastos"
+                value={kpiGastos.value}
+                variacion_pct={kpiGastos.variacion_pct}
+                variacion_label="vs Mar"
+                goodDirection="down"
+              />
+              <KpiCompact
+                label="Por cobrar"
+                value={mockCuentasPorCobrar.total}
+                variacion_pct={-3.2}
+                variacion_label="vs Mar"
+                goodDirection="down"
+              />
+              <KpiCompact
+                label="IVA a pagar"
+                value={kpiIva.value}
+                variacion_pct={kpiIva.variacion_pct}
+                variacion_label="vs Mar"
+                goodDirection="down"
+              />
             </div>
           </div>
         </section>
 
-        {/* ── CHARTS ROW ── */}
-        <section className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-1">
-            <FinancialChartCard data={mockChartData} />
-          </div>
-          <div className="lg:col-span-1">
-            <TaxSummaryCard data={mockImpuesto} />
-          </div>
-          <div className="lg:col-span-1">
-            <DonutChart
-              data={mockDistribucionGastos}
-              title="Distribución de gastos"
-              centerLabel="Total gastos"
-              centerValue={13_250_000}
-            />
-          </div>
-        </section>
-
-        {/* ── CUENTAS POR COBRAR / PAGAR + ALERTAS + CIERRE ── */}
-        <section className="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Cuentas por cobrar */}
-          <div className="card p-5">
-            <h3 className="text-sm font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>Cuentas por cobrar</h3>
-            <p className="text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>Total · {mockCuentasPorCobrar.clientes} clientes</p>
-            <p className="text-2xl font-bold mb-3" style={{ color: 'var(--color-text-primary)' }}>
-              {formatCLP(mockCuentasPorCobrar.total)}
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--color-text-secondary)' }}>Vencidas</span>
-                <span className="amount-negative">{formatCLP(mockCuentasPorCobrar.vencidas)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--color-text-secondary)' }}>Por vencer (30 días)</span>
-                <span className="font-semibold" style={{ color: 'var(--color-alert-medium)' }}>{formatCLP(mockCuentasPorCobrar.por_vencer_30d)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--color-text-secondary)' }}>Por vencer (&gt;30 días)</span>
-                <span className="font-semibold" style={{ color: 'var(--color-text-contrast)' }}>{formatCLP(mockCuentasPorCobrar.por_vencer_mas_30d)}</span>
-              </div>
-            </div>
-            <a href="/ingresos" className="mt-3 flex items-center gap-1 text-xs hover:underline font-medium" style={{ color: 'var(--color-accent)' }}>
-              Ver detalle <ExternalLink size={11} />
-            </a>
+        {/* ───────────────────────────────────────────────────────── */}
+        {/* AI INSIGHT + ALERTAS                                       */}
+        {/* ───────────────────────────────────────────────────────── */}
+        <section className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+          <div className="lg:col-span-3">
+            <InsightCard insight={mockFeaturedInsight} />
           </div>
 
-          {/* Cuentas por pagar */}
-          <div className="card p-5">
-            <h3 className="text-sm font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>Cuentas por pagar</h3>
-            <p className="text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>Total · {mockCuentasPorPagar.proveedores} proveedores</p>
-            <p className="text-2xl font-bold mb-3" style={{ color: 'var(--color-text-primary)' }}>
-              {formatCLP(mockCuentasPorPagar.total)}
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--color-text-secondary)' }}>Vencidas</span>
-                <span className="amount-negative">{formatCLP(mockCuentasPorPagar.vencidas)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--color-text-secondary)' }}>Por vencer (30 días)</span>
-                <span className="font-semibold" style={{ color: 'var(--color-alert-medium)' }}>{formatCLP(mockCuentasPorPagar.por_vencer_30d)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: 'var(--color-text-secondary)' }}>Por vencer (&gt;30 días)</span>
-                <span className="font-semibold" style={{ color: 'var(--color-text-contrast)' }}>{formatCLP(mockCuentasPorPagar.por_vencer_mas_30d)}</span>
-              </div>
-            </div>
-            <a href="/gastos" className="mt-3 flex items-center gap-1 text-xs hover:underline font-medium" style={{ color: 'var(--color-accent)' }}>
-              Ver detalle <ExternalLink size={11} />
-            </a>
-          </div>
-
-          {/* Alertas */}
-          <div className="card p-5">
+          <div className="lg:col-span-2 card p-5">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Alertas importantes</h3>
-              <span className="text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: 'var(--color-alert-high)' }}>
+              <h3
+                className="text-[10px] font-semibold uppercase tracking-[0.09em]"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                Alertas activas
+              </h3>
+              <span
+                className="text-[10px] font-bold px-2 py-0.5 rounded-full tabular"
+                style={{
+                  backgroundColor: 'var(--color-expense-tint)',
+                  color: 'var(--color-expense)',
+                  border: '1px solid rgba(248,113,113,0.2)',
+                }}
+              >
                 {alertasActivas.length}
               </span>
             </div>
-            <div className="space-y-0 divide-y divide-slate-100">
-              {alertasActivas.slice(0, 4).map((alerta) => (
+
+            <div
+              className="divide-y"
+              style={{ borderColor: 'var(--color-border)' }}
+            >
+              {topAlertas.map((alerta) => (
                 <AlertCard key={alerta.id} alerta={alerta} compact />
               ))}
             </div>
-            <a href="/alertas" className="mt-3 flex items-center gap-1 text-xs hover:underline font-medium" style={{ color: 'var(--color-accent)' }}>
-              Ver todas las alertas <ExternalLink size={11} />
-            </a>
-          </div>
 
-          {/* Checklist cierre */}
-          <div>
-            <ClosePeriodChecklist cierre={mockCierre} />
-            <a href="/cierres" className="mt-2 flex items-center justify-center gap-1 text-xs hover:underline font-medium" style={{ color: 'var(--color-accent)' }}>
-              Continuar cierre <ExternalLink size={11} />
-            </a>
-          </div>
-        </section>
-
-        {/* ── CUENTAS BANCARIAS + ACCIONES RÁPIDAS ── */}
-        <section className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Cuentas bancarias */}
-          <div className="card p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Cuentas bancarias</h3>
-              <a href="/configuracion" className="text-xs hover:underline" style={{ color: 'var(--color-accent)' }}>Ver todas</a>
-            </div>
-            <div className="space-y-3">
-              {mockCuentasBancarias.map((cuenta) => (
-                <div key={cuenta.id} className="flex items-center gap-3">
-                  <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: cuenta.color + '20' }}
-                  >
-                    <Building2 size={16} style={{ color: cuenta.color }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate" style={{ color: 'var(--color-text-primary)' }}>{cuenta.banco}</p>
-                    <p className="text-xs truncate" style={{ color: 'var(--color-text-muted)' }}>
-                      {cuenta.tipo} {cuenta.numero && `· ${cuenta.numero}`}
-                    </p>
-                  </div>
-                  <p className="text-sm font-bold whitespace-nowrap" style={{ color: 'var(--color-text-primary)' }}>
-                    {formatCLP(cuenta.saldo, true)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Acciones rápidas */}
-          <div className="lg:col-span-2 card p-5">
-            <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>Acciones rápidas</h3>
-            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-              {quickActions.map((action) => (
-                <QuickActionButton
-                  key={action.label}
-                  label={action.label}
-                  href={action.href}
-                  icon={action.icon}
-                  color={action.color}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── ÚLTIMOS MOVIMIENTOS ── */}
-        <section className="mt-8">
-          <div className="flex items-center justify-between mb-3">
-            <h2
-              className="text-[11px] font-semibold uppercase tracking-[0.09em]"
-              style={{ color: 'var(--color-text-muted)' }}
+            <Link
+              href="/alertas"
+              className="mt-3 inline-flex items-center gap-1 text-xs font-semibold cursor-pointer"
+              style={{ color: 'var(--color-accent)' }}
             >
-              Últimos movimientos
-            </h2>
-            <a href="/movimientos" className="text-xs font-medium hover:underline" style={{ color: 'var(--color-accent)' }}>
-              Ver todos →
-            </a>
+              Ver todas
+              <ArrowRight size={11} aria-hidden="true" />
+            </Link>
           </div>
-          {/* Desktop */}
+        </section>
+
+        {/* ───────────────────────────────────────────────────────── */}
+        {/* CHARTS: 6-month evolution + Distribución de gastos         */}
+        {/* ───────────────────────────────────────────────────────── */}
+        <section className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+          <div className="lg:col-span-3">
+            <FinancialChartCard data={mockChartData} title="Ingresos vs gastos · 6 meses" />
+          </div>
+
+          <div className="lg:col-span-2 card p-5">
+            <div className="flex items-center justify-between mb-5">
+              <h3
+                className="text-sm font-semibold"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                Distribución de gastos
+              </h3>
+              <Link
+                href="/gastos"
+                className="text-xs font-medium cursor-pointer transition-colors hover:underline"
+                style={{ color: 'var(--color-accent)' }}
+              >
+                Ver detalle
+              </Link>
+            </div>
+            <HBarList items={mockDistribucionGastosBars} totalLabel="Total Abr 2026" />
+          </div>
+        </section>
+
+        {/* ───────────────────────────────────────────────────────── */}
+        {/* ÚLTIMOS MOVIMIENTOS                                        */}
+        {/* ───────────────────────────────────────────────────────── */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2
+                className="text-[10px] font-semibold uppercase tracking-[0.09em]"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                Últimos movimientos
+              </h2>
+              <p
+                className="text-sm mt-1"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Actualizado hace 4 horas
+              </p>
+            </div>
+            <Link
+              href="/movimientos"
+              className="inline-flex items-center gap-1 text-xs font-semibold cursor-pointer"
+              style={{ color: 'var(--color-accent)' }}
+            >
+              Ver todos
+              <ArrowRight size={11} aria-hidden="true" />
+            </Link>
+          </div>
           <div className="hidden md:block">
             <MovementTable movimientos={mockUltimosMovimientos} />
           </div>
-          {/* Mobile */}
           <div className="md:hidden card overflow-hidden">
             <MovementListMobile movimientos={mockUltimosMovimientos} />
           </div>
         </section>
-
       </div>
     </AppShell>
   );

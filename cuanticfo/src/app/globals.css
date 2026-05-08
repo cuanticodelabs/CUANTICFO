@@ -1,54 +1,74 @@
 @import "tailwindcss";
 
-@theme inline {
-  /* Brand */
-  --color-sidebar: #0f1729;
-  --color-sidebar-hover: #1e2d4a;
-  --color-sidebar-active: #2563eb;
-  --color-sidebar-text: #ffffff;
-  --color-accent: #2563eb;
-  --color-accent-dark: #1d4ed8;
-  --color-accent-light: #eff6ff;
-  --color-accent-tint: #dbeafe;
+/* ───────────────────────────────────────────────────────────────
+ * CuantiCFO — Onyx + Champagne
+ * Bloomberg Terminal × Tom Ford. Premium dark, champagne accent.
+ * ──────────────────────────────────────────────────────────────*/
 
-  /* Income */
-  --color-income: #16a34a;
-  --color-income-dark: #15803d;
-  --color-income-light: #f0fdf4;
-  --color-income-tint: #dcfce7;
+@theme inline {
+  /* Sidebar (slightly darker than app surface for hierarchy) */
+  --color-sidebar: #07080A;
+  --color-sidebar-hover: #14161B;
+  --color-sidebar-active: #D4A574;
+  --color-sidebar-text: #F5F5F4;
+  --color-sidebar-text-muted: #8B8D93;
+  --color-sidebar-border: #1A1C22;
+
+  /* Accent — champagne, used sparingly: focus, links, primary CTA */
+  --color-accent: #D4A574;
+  --color-accent-dark: #B88B5A;
+  --color-accent-light: #1F1A12;     /* dark warm tint for accent surfaces */
+  --color-accent-tint: #2A2218;      /* slightly lifted accent wash */
+  --color-accent-text: #E8C9A0;      /* on-accent-light text */
+
+  /* Income — bright enough to read on near-black */
+  --color-income: #4ADE80;
+  --color-income-dark: #16A34A;
+  --color-income-light: #0E1A12;
+  --color-income-tint: #15291D;
 
   /* Expense */
-  --color-expense: #dc2626;
-  --color-expense-dark: #b91c1c;
-  --color-expense-light: #fef2f2;
-  --color-expense-tint: #fee2e2;
+  --color-expense: #F87171;
+  --color-expense-dark: #DC2626;
+  --color-expense-light: #1A0E0E;
+  --color-expense-tint: #2A1515;
 
   /* Alerts */
-  --color-alert-high: #dc2626;
-  --color-alert-medium: #ea580c;
-  --color-alert-medium-dark: #c2410c;
-  --color-alert-low: #2563eb;
-  --color-warning: #d97706;
-  --color-warning-light: #fffbeb;
-  --color-warning-tint: #ffedd5;
+  --color-alert-high: #F87171;
+  --color-alert-medium: #FB923C;
+  --color-alert-medium-dark: #FDBA74;
+  --color-alert-low: #D4A574;
+  --color-warning: #FB923C;
+  --color-warning-light: #1A1208;
+  --color-warning-tint: #2A1F10;
 
   /* Receivable (Cobrar) */
-  --color-cobrar: #7c3aed;
-  --color-cobrar-dark: #6d28d9;
-  --color-cobrar-light: #faf5ff;
+  --color-cobrar: #C4B5FD;
+  --color-cobrar-dark: #A78BFA;
+  --color-cobrar-light: #14122A;
+  --color-cobrar-tint: #1F1B3A;
+
+  /* AI CFO surface — violet wash, separates AI authored content */
+  --color-ai: #A78BFA;
+  --color-ai-dark: #C4B5FD;
+  --color-ai-tint: #1A1825;
+  --color-ai-ring: #2D2542;
 
   /* Neutral */
-  --color-app-bg: #f1f5f9;
-  --color-card: #ffffff;
-  --color-border: #e2e8f0;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #64748b;
-  --color-text-muted: #94a3b8;
-  --color-text-contrast: #475569;
-  --color-scrollbar-thumb: #cbd5e1;
+  --color-app-bg: #0A0B0E;
+  --color-card: #14161B;
+  --color-card-hover: #181A20;
+  --color-border: #25282E;
+  --color-border-strong: #353941;
+  --color-text-primary: #F5F5F4;
+  --color-text-secondary: #B8BAC0;
+  --color-text-muted: #8B8D93;
+  --color-text-contrast: #D4D4D8;
+  --color-scrollbar-thumb: #2A2D34;
 
-  /* Font */
+  /* Typography */
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
 /* Reset & Base */
@@ -64,6 +84,7 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark;
 }
 
 body {
@@ -73,35 +94,48 @@ body {
   line-height: 1.5;
 }
 
+/* Selection */
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-app-bg);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: var(--color-app-bg);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-scrollbar-thumb);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+  background: var(--color-border-strong);
 }
 
-/* Utility classes */
+/* ───────────────────────────────────────────────────────────────
+ * Surfaces
+ * ──────────────────────────────────────────────────────────────*/
+
 .card {
   background-color: var(--color-card);
   border-radius: 12px;
   border: 1px solid var(--color-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  /* Subtle ambient highlight — soft top edge, faint bottom for depth */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.02),
+    0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .card-hover {
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 .card-hover:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: var(--color-card-hover);
+  border-color: var(--color-border-strong);
   transform: translateY(-1px);
 }
 
@@ -109,42 +143,81 @@ body {
 .sidebar {
   background-color: var(--color-sidebar);
   color: var(--color-sidebar-text);
+  border-right: 1px solid var(--color-sidebar-border);
 }
 
-/* Badge colors */
+/* ───────────────────────────────────────────────────────────────
+ * Badges — dark-friendly tints
+ * ──────────────────────────────────────────────────────────────*/
+
 .badge-green {
   background-color: var(--color-income-tint);
-  color: var(--color-income-dark);
+  color: var(--color-income);
+  border: 1px solid rgba(74, 222, 128, 0.15);
 }
 .badge-red {
   background-color: var(--color-expense-tint);
-  color: var(--color-expense-dark);
+  color: var(--color-expense);
+  border: 1px solid rgba(248, 113, 113, 0.15);
 }
 .badge-orange {
   background-color: var(--color-warning-tint);
-  color: var(--color-alert-medium-dark);
+  color: var(--color-warning);
+  border: 1px solid rgba(251, 146, 60, 0.15);
 }
 .badge-blue {
   background-color: var(--color-accent-tint);
-  color: var(--color-accent-dark);
+  color: var(--color-accent);
+  border: 1px solid rgba(212, 165, 116, 0.15);
 }
 .badge-gray {
-  background-color: var(--color-app-bg);
-  color: var(--color-text-contrast);
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+.badge-ai {
+  background-color: var(--color-ai-tint);
+  color: var(--color-ai-dark);
+  border: 1px solid var(--color-ai-ring);
 }
 
-/* Number formatting */
+/* ───────────────────────────────────────────────────────────────
+ * Numbers
+ * ──────────────────────────────────────────────────────────────*/
+
 .amount-positive {
   color: var(--color-income);
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 .amount-negative {
   color: var(--color-expense);
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 .amount-neutral {
   color: var(--color-text-primary);
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+.font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* AI surface — violet wash for CFO-authored content */
+.surface-ai {
+  background:
+    linear-gradient(
+      135deg,
+      var(--color-ai-tint) 0%,
+      rgba(26, 24, 37, 0.6) 100%
+    );
+  border: 1px solid var(--color-ai-ring);
+  border-radius: 12px;
 }
 
 /* Animations */
@@ -161,12 +234,56 @@ body {
   to   { transform: translateX(0); }
 }
 
+@keyframes typingDot {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30%           { opacity: 1;   transform: translateY(-2px); }
+}
+
 /* Mobile bottom nav safe area */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Focus indicators — visible for keyboard navigation */
+/* AI CFO grid — responsive 1 → 2 → 3 columns */
+.ai-cfo-grid {
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 1024px) {
+  .ai-cfo-grid {
+    grid-template-columns: 240px 1fr;
+  }
+}
+@media (min-width: 1280px) {
+  .ai-cfo-grid {
+    grid-template-columns: 260px 1fr 320px;
+  }
+}
+
+/* Skip link — visible only when keyboard-focused */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 8px;
+  z-index: 100;
+  padding: 8px 16px;
+  background-color: var(--color-accent);
+  color: var(--color-app-bg);
+  font-weight: 600;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: top 150ms ease-out;
+}
+.skip-link:focus {
+  top: 8px;
+  outline: none;
+}
+
+/* ───────────────────────────────────────────────────────────────
+ * Focus — champagne ring on dark
+ * ──────────────────────────────────────────────────────────────*/
+
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
