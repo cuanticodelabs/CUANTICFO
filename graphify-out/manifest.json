@@ -24,7 +24,7 @@
     "hash": "dfa1f5f6a7037bf39dc510f30b180002"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\next-env.d.ts": {
-    "mtime": 1777655927.8910756,
+    "mtime": 1778196619.7402482,
     "hash": "d0f8375ae1199dc7acd3977fc33b78b8"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\next.config.ts": {
@@ -36,136 +36,264 @@
     "hash": "239f3ebf717465dc636818a1a619398d"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\layout.tsx": {
-    "mtime": 1777562631.2094667,
-    "hash": "39b6cef4d0c5feefccd6d6f01ff104cb"
+    "mtime": 1778177113.2957635,
+    "hash": "7612e443ad63d0d406010eeb0f9ba38c"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\page.tsx": {
     "mtime": 1777562659.0547712,
     "hash": "706e0e5ceb148ab67fd740bf6d49818b"
   },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\ai-cfo\\page.tsx": {
+    "mtime": 1778193400.8854194,
+    "hash": "e7c7142946099c3581cec98fe236419e"
+  },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\alertas\\page.tsx": {
-    "mtime": 1777563064.7870805,
-    "hash": "07073965fc07dbbf5c2edd37b88cb72a"
+    "mtime": 1778194811.1827576,
+    "hash": "8bad747c6a223a67c7712442e7e60555"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\api\\finance\\gastos\\route.ts": {
     "mtime": 1777655137.4250045,
     "hash": "d45dee5dcb5dfad195329e0d804143be"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\cierres\\page.tsx": {
-    "mtime": 1777563106.971401,
-    "hash": "da5647bb75c85cd2980749be511fefbb"
+    "mtime": 1778194601.495232,
+    "hash": "e2c52d435aed4c1a513a9a564c2b80a5"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\configuracion\\page.tsx": {
-    "mtime": 1777654879.9780824,
-    "hash": "0a2afdc0e7aef225306129bb148910bf"
+    "mtime": 1778193421.8594742,
+    "hash": "6f02b187c85bcd635a14d35f2cee0f2f"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\dashboard\\page.tsx": {
-    "mtime": 1777562728.6169202,
-    "hash": "1e43c7b8acb84b8e4edb24a1059839c7"
+    "mtime": 1778178682.8004668,
+    "hash": "705e5461709022f00e80084234098bd1"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\documentos\\page.tsx": {
-    "mtime": 1777654941.8029337,
-    "hash": "c77cf87a75048424961ac08aea81b6ae"
+    "mtime": 1778194716.091169,
+    "hash": "d5c4159046b06609cdd1ff9f941790d3"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\gastos\\page.tsx": {
-    "mtime": 1777562856.666008,
-    "hash": "5080e1a98ff27bf2e473c0ee80617b43"
+    "mtime": 1778194550.059633,
+    "hash": "0973596c65d7f6b10023211864de49c3"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\impuestos\\page.tsx": {
     "mtime": 1777654908.805491,
     "hash": "3fe2cb60d290b9148da090908f57ae5c"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\impuestos\\f29\\page.tsx": {
-    "mtime": 1777562945.9422834,
-    "hash": "5d0b17e10ba2d24271f1112c2f4c572b"
+    "mtime": 1778194647.9236417,
+    "hash": "f9506b5609899f7ac7a6759165745287"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\ingresos\\page.tsx": {
-    "mtime": 1777562814.5600824,
-    "hash": "24bcb0d9ba19b5308a1d137a08cb2d73"
+    "mtime": 1778194515.1176925,
+    "hash": "ba40e2edb5648527db78d251ebee38d4"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\libros\\page.tsx": {
-    "mtime": 1777562901.4458053,
-    "hash": "28ba01b8727a4d8fc7b7087c0a1272e3"
+    "mtime": 1778194682.9065897,
+    "hash": "a01dbd06910910be12e079cfb200ec5f"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\movimientos\\page.tsx": {
-    "mtime": 1777562771.5531151,
-    "hash": "bcd86b5a133004d92f159036724f6522"
+    "mtime": 1778194574.7447472,
+    "hash": "7ea7e1ccc8760d4863e6abde6158fb43"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\reportes\\estado-resultados\\page.tsx": {
-    "mtime": 1777655433.2638357,
-    "hash": "ab0b247cefbc9ecc9dd890e78177497d"
+    "mtime": 1778192905.1984224,
+    "hash": "e2b196f146bc37bfe091cdb4754f6a8e"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\reportes\\flujo-caja\\page.tsx": {
-    "mtime": 1777655435.2762005,
-    "hash": "8e2ac296f1adee94a4d448bf4702bb0b"
+    "mtime": 1778189647.2871976,
+    "hash": "1cbdefbef5a57e165f198917d592451a"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\reportes\\kpis\\page.tsx": {
+    "mtime": 1778194775.2507565,
+    "hash": "2f23679f71cff352772ef350d96c2dd5"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\reportes\\presupuesto\\page.tsx": {
+    "mtime": 1778194778.692443,
+    "hash": "0ea0c25be5f260122eb471dabaf362a9"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\app\\reportes\\proyecciones\\page.tsx": {
+    "mtime": 1778192944.2319984,
+    "hash": "890a21e27b5773c0e1a4b7eca5420043"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ai\\ChatComposer.tsx": {
+    "mtime": 1778191437.8218474,
+    "hash": "c5eadfee009141e0e404117aea37ddd3"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ai\\ChatMessage.tsx": {
+    "mtime": 1778191424.4398985,
+    "hash": "2d3808444717c8ddaefb853b09888987"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ai\\CitationChip.tsx": {
+    "mtime": 1778191397.0359724,
+    "hash": "42a9e1cac6524e56045ba619a4566f3a"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ai\\ThreadList.tsx": {
+    "mtime": 1778191450.0512655,
+    "hash": "474d2d4e4c82374f255ecd1def556809"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\charts\\CashForecast.tsx": {
+    "mtime": 1778193215.9331982,
+    "hash": "37cf4b2b519751184f107b917f169664"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\charts\\ChartDataTable.tsx": {
+    "mtime": 1778193174.0470607,
+    "hash": "4a965fb02bf9dd189e8e30bfd81a8db8"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\charts\\DonutChart.tsx": {
-    "mtime": 1777562600.890737,
-    "hash": "8365c72d4b2763c85011c9da70f70653"
+    "mtime": 1778174814.1526754,
+    "hash": "294d906dce6964bb801f157ed0138fda"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\charts\\HBarList.tsx": {
+    "mtime": 1778193240.8436701,
+    "hash": "f522720f40429a1931bceee964ef282f"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\charts\\ProjectionChart.tsx": {
+    "mtime": 1778193224.3845716,
+    "hash": "a5a3eb12c7dafe34948833e269b9503a"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\charts\\Sparkline.tsx": {
+    "mtime": 1778177160.1957598,
+    "hash": "8b70fab90cd700e430b111c8ad150768"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\charts\\VarianceHeatmap.tsx": {
+    "mtime": 1778193250.807212,
+    "hash": "639310f69bdbfc9a2c12dff6ad86c2bb"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\charts\\Waterfall.tsx": {
+    "mtime": 1778193207.280483,
+    "hash": "690830d6eaa022f957736c28e76813d0"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\layout\\AppShell.tsx": {
-    "mtime": 1777562260.3724818,
-    "hash": "cd77f15250a944c9d80f42038349f3f7"
+    "mtime": 1778193270.4553368,
+    "hash": "ee726868375700396f789324a7f9dcbf"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\layout\\BottomNav.tsx": {
-    "mtime": 1777562221.5687027,
-    "hash": "eef1e0e7d6e6ce6bbb1be411c1cf7899"
+    "mtime": 1778178512.806681,
+    "hash": "f832ed95fbb119d2f6ba74229885d3a2"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\layout\\Sidebar.tsx": {
-    "mtime": 1777562142.5959387,
-    "hash": "70fae6c417e81ae7d3c9a30860311864"
+    "mtime": 1778192914.640747,
+    "hash": "32c0b235e00457e87542c8616b3ed441"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\layout\\TopBar.tsx": {
-    "mtime": 1777562186.1509395,
-    "hash": "b11f955e6cee9f287190c257f53a9493"
+    "mtime": 1778178506.2437506,
+    "hash": "7a895e9e0e9e097725110c2a9a0c0c57"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\AlertCard.tsx": {
-    "mtime": 1777562413.548532,
-    "hash": "cee4bba78ab17b2cdebe6b6f767fdc46"
+    "mtime": 1778178541.9883263,
+    "hash": "66cfdf145e769b9e3c53401fddd02f11"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\AmountCell.tsx": {
+    "mtime": 1778177125.9290874,
+    "hash": "2a8e7dc03e98125bcd7573b1e513244f"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\ClosePeriodChecklist.tsx": {
-    "mtime": 1777562531.1206129,
-    "hash": "b64be8906e49f0389f2cfd7b73582744"
+    "mtime": 1778189171.4164073,
+    "hash": "c4073a5a9bfe3cd16c961d490971e8fb"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\Field.tsx": {
+    "mtime": 1778193279.9321752,
+    "hash": "58e4c6d4d349e2f5e434020dfe1e0884"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\FinancialChartCard.tsx": {
-    "mtime": 1777562338.1576264,
-    "hash": "d1ee66a54e3c81e75a57a7d079b10be0"
+    "mtime": 1778193257.4048522,
+    "hash": "aaf0061f988679616e0a07b37bf3cfb5"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\Input.tsx": {
+    "mtime": 1778193283.7168036,
+    "hash": "c8fb70b7a19c2d7ddf2d85c0f3f00b70"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\InsightCard.tsx": {
+    "mtime": 1778177154.3111022,
+    "hash": "6a0dd3fa4aadab995def88d90e80e230"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\KpiCard.tsx": {
-    "mtime": 1777562300.7238023,
-    "hash": "d50680d28af449ddf8571a350e0fcc0c"
+    "mtime": 1778173893.8252845,
+    "hash": "ff84fc70470e6482dda82dd36544593f"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\KpiCompact.tsx": {
+    "mtime": 1778194771.8504663,
+    "hash": "9b06370bb7a26da27e5f12921dfb30cb"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\KpiHero.tsx": {
+    "mtime": 1778178637.7903457,
+    "hash": "a32de1a158c7454640b71f69b7b0332d"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\KpiMonitorRow.tsx": {
+    "mtime": 1778192721.050477,
+    "hash": "66a2502480850c68ce01c7efdf32c4d9"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\MovementListMobile.tsx": {
-    "mtime": 1777562488.914518,
-    "hash": "7d7c00c520c03ced5c3dc938ef869a99"
+    "mtime": 1778178584.393327,
+    "hash": "8aef3f07fde0d2e387836148639f3b5c"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\MovementTable.tsx": {
-    "mtime": 1777562453.867106,
-    "hash": "9e5d8a5275211aa382cb499ca1a0a256"
+    "mtime": 1778178570.950169,
+    "hash": "2b16fe13199b7a466dc2cd10fb2388cd"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\QuickActionButton.tsx": {
-    "mtime": 1777562564.0499513,
-    "hash": "436ffaaa66a497bf5b04b6b915e6af99"
+    "mtime": 1778174155.2820303,
+    "hash": "f6f0ac1ac8af2149a2408a3c6622c737"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\ScenarioSlider.tsx": {
+    "mtime": 1778192675.3375275,
+    "hash": "a8a91adc93af7cbb9917e8f797c442e3"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\Select.tsx": {
+    "mtime": 1778193288.3828995,
+    "hash": "52870d138df6134b4130db8fa6dd077d"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\TaxSummaryCard.tsx": {
-    "mtime": 1777562376.5439537,
-    "hash": "904f1805c95bb8574919c57a3ca7a915"
+    "mtime": 1778194625.9807932,
+    "hash": "cea674b0287a4be70c332aac5c3d86e9"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\Toggle.tsx": {
+    "mtime": 1778193294.842356,
+    "hash": "2bae279df4a82e88483e38f430a9acb5"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\components\\ui\\TraceTooltip.tsx": {
+    "mtime": 1778177138.725327,
+    "hash": "3b0ae53c97ad4d4f5f3bfa29a622a1ea"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\api\\n8n-client.ts": {
     "mtime": 1777655135.411811,
     "hash": "9ce9fa1196bfd06a07ba9d6873e790a0"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\ai.ts": {
+    "mtime": 1778191483.3610704,
+    "hash": "f677292e143b12cabaf9c7b9c742334c"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\alertas.ts": {
     "mtime": 1777561953.246959,
     "hash": "34a4b515a1a9f2fbae2f953889975ab5"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\dashboard.ts": {
-    "mtime": 1777561909.36421,
-    "hash": "5c44435e4d498efcaa04b623693b64a4"
+    "mtime": 1778177249.4169714,
+    "hash": "a81c65afa2cc4abb173c85002c8cd7f2"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\flujo.ts": {
+    "mtime": 1778189587.9758644,
+    "hash": "faf8a3da30a4b830ac23e743f8f82c9f"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\insights.ts": {
+    "mtime": 1778177220.4801724,
+    "hash": "787df1b6d8852cc5be15ee4900642e51"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\kpis.ts": {
+    "mtime": 1778192755.5382998,
+    "hash": "5b7912b42ff3a0147abb5bc3e55831d7"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\movimientos.ts": {
     "mtime": 1777562010.8665347,
     "hash": "4b8fb9315402eddd491a9067bb90f36c"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\presupuesto.ts": {
+    "mtime": 1778189600.18888,
+    "hash": "72239412d624e36f130abd60d13c5dbf"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\proyecciones.ts": {
+    "mtime": 1778192744.0958757,
+    "hash": "929e7c409e0f353fb8502bda1c8b2eb4"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\src\\lib\\mock-data\\reportes.ts": {
     "mtime": 1777562049.029854,
@@ -191,6 +319,10 @@
     "mtime": 1777094871.7664576,
     "hash": "25f65110870589600ed444b5f08f8420"
   },
+  "E:\\Proyectos\\CUANTICFO\\CLAUDE.md": {
+    "mtime": 1778170425.6851149,
+    "hash": "2ed67c68f28bc1ef95ac24167431d7e8"
+  },
   "E:\\Proyectos\\CUANTICFO\\Contexto_proyecto.txt": {
     "mtime": 1777090035.4106228,
     "hash": "1c9afc51cedc53d2417b1d1717be48bd"
@@ -215,6 +347,10 @@
     "mtime": 1777143277.982576,
     "hash": "dbeb2521d6567d3e1270f4e46ae698f7"
   },
+  "E:\\Proyectos\\CUANTICFO\\PRODUCT.md": {
+    "mtime": 1778173045.1400354,
+    "hash": "34c35b8e75b8db6f1f505fcd058fbaed"
+  },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\AGENTS.md": {
     "mtime": 1777094950.7136106,
     "hash": "9e09241799026ac05be315a2f0b50055"
@@ -223,9 +359,17 @@
     "mtime": 1777094950.714139,
     "hash": "5c27369b226fcf2be8a6cfe52224e767"
   },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\DESIGN.md": {
+    "mtime": 1778173679.684816,
+    "hash": "ca03eabbd695af049f1b192ddb2c60d1"
+  },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\FRONTEND_NOTES.md": {
     "mtime": 1777655006.02668,
     "hash": "c9c791cab287835b3f2817ab04b6ce7e"
+  },
+  "E:\\Proyectos\\CUANTICFO\\cuanticfo\\PRODUCT.md": {
+    "mtime": 1778173199.948106,
+    "hash": "34c35b8e75b8db6f1f505fcd058fbaed"
   },
   "E:\\Proyectos\\CUANTICFO\\cuanticfo\\README.md": {
     "mtime": 1777094877.785764,
