@@ -20,7 +20,12 @@
       "Bash(npx eslint *)",
       "Bash(echo \"EXIT=$?\")",
       "Bash(npx next *)",
-      "Bash(echo \"TSC=$?\")"
+      "Bash(echo \"TSC=$?\")",
+      "Bash(ls E:\\\\Proyectos\\\\CUANTICFO\\\\cuanticfo\\\\src\\\\app\\\\api *)",
+      "Bash(curl *)",
+      "Bash(xxd)",
+      "mcp__n8n-mcp__execute_workflow",
+      "mcp__n8n-mcp__get_execution"
     ]
   },
   "enableAllProjectMcpServers": true,

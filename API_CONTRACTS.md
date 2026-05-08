@@ -1,6 +1,7 @@
 # CuantiCFO — Contratos de API
-> Versión 1.0 · 2026-04-25  
+> Versión 1.1 · 2026-05-08  
 > Contratos JSON entre Next.js y los webhooks n8n
+> **ACTUALIZADO v1.1**: Migración de Supabase/PostgreSQL a MongoDB
 
 ---
 
@@ -14,9 +15,9 @@ Next.js Server Action / API Route (/api/finance/*)
     │ POST + Header: X-CFO-Secret
     ▼
 n8n Webhook (https://n8n.cuanticode.com/webhook/cfo/*)
-    │ Postgres node
+    │ MongoDB Driver node (MONGODB_URI)
     ▼
-Supabase/PostgreSQL
+MongoDB (db: cuanticfo)
 ```
 
 **Regla de oro**: El cliente (browser) NUNCA llama directamente a n8n. Todo pasa por Next.js server-side.
@@ -145,7 +146,7 @@ POST /api/finance/expenses
   "usa_credito_fiscal": false,
   "estado_pago": "pagado",
   "proyecto_id": null,
-  "archivo_url": "https://storage.supabase.co/.../factura.pdf"
+  "archivo_url": "https://storage.cuanticode.com/.../factura.pdf"
 }
 ```
 
@@ -171,14 +172,14 @@ POST /api/finance/documents
 → n8n: POST /webhook/cfo/upload-document
 ```
 
-> Flujo recomendado: Next.js primero sube el archivo a Supabase Storage y obtiene la URL pre-firmada, luego envía la URL a este endpoint.
+> Flujo recomendado: Next.js primero sube el archivo a Object Storage (S3/Cloudinary/R2) y obtiene la URL pública/firmada, luego envía la URL a este endpoint.
 
 **Request:**
 ```json
 {
   "empresa_id": "550e8400-...",
   "tipo_uso": "gasto",
-  "archivo_url": "https://storage.supabase.co/.../doc.pdf",
+  "archivo_url": "https://storage.cuanticode.com/.../doc.pdf",
   "nombre_archivo": "factura-proveedor-abril.pdf",
   "mime_type": "application/pdf"
 }
@@ -365,13 +366,13 @@ POST /api/closing/monthly
 
 ---
 
-### 8. Obtener dashboard (lectura directa Supabase)
+### 8. Obtener dashboard (lectura directa MongoDB)
 
-> Este endpoint puede hacerse directamente desde Next.js a Supabase, sin pasar por n8n, ya que es solo lectura.
+> Este endpoint puede hacerse directamente desde Next.js a MongoDB, sin pasar por n8n, ya que es solo lectura.
 
 ```
 GET /api/dashboard?empresa_id=uuid&periodo=2026-04
-→ Supabase directamente (Server Action)
+→ MongoDB directamente (Server Action con MONGODB_URI)
 ```
 
 **Response 200:**
@@ -448,17 +449,17 @@ GET /api/dashboard?empresa_id=uuid&periodo=2026-04
 
 ### Next.js (solo server-side)
 ```env
-N8N_BASE_URL=https://n8n.cuanticode.com
-N8N_WEBHOOK_SECRET=<token-secreto-compartido>
-SUPABASE_URL=https://<proyecto>.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<clave-service-role>
+MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/cuanticfo
+N8N_BASE_URL=https://n8n.cuanticode.com/webhook/cfo
+N8N_AUTH_SECRET=<token-secreto-compartido>
+STORAGE_BASE_URL=https://storage.cuanticode.com
 ```
 
 ### n8n
 ```env
-SUPABASE_URL=https://<proyecto>.supabase.co
-SUPABASE_SERVICE_KEY=<clave-service-role>
+MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/cuanticfo
 N8N_WEBHOOK_SECRET=<token-secreto-compartido>
+STORAGE_BASE_URL=https://storage.cuanticode.com
 SMTP_HOST=<servidor-smtp>
 SMTP_USER=<correo>
 SMTP_PASS=<clave>

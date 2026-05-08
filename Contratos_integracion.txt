@@ -1,17 +1,36 @@
-Contratos de integración entre Next.js y n8n — CuantiCFO v1.1
+Contratos de integración entre Next.js y n8n — CuantiCFO v1.2
 ==============================================================
+-- ACTUALIZADO v1.2 (2026-05-08): Migración de Supabase/PostgreSQL a MongoDB --
+
 Patrón general:
-  Browser → Next.js route (/api/finance/...) → n8n webhook → PostgreSQL
+  Browser → Next.js route (/api/finance/...) → n8n webhook → MongoDB
   Next.js valida sesión antes de llamar a n8n.
-  n8n usa service_role key para Supabase (bypasa RLS).
+  n8n usa MongoDB Driver node con MONGODB_URI (sin RLS; filtrado por empresa_id en cada query).
   Webhooks protegidos con Header Auth: X-CFO-Secret: <secret>
 
 Base URL n8n: https://n8n.cuanticode.com/webhook/cfo
 
 Convenciones:
-  - periodo: siempre 'YYYY-MM' (ej: '2026-04')
-  - montos: número sin formato (100000, no "$100.000")
-  - empresa_id: UUID inyectado por Next.js desde sesión (nunca desde el cliente)
+  - periodo: siempre 'YYYY-MM' (ej: '2026-04'), validado con regex en schema MongoDB
+  - montos: número sin formato (100000, no "$100.000"), almacenados como Decimal128
+  - _id: string UUID generado por la app/n8n antes de insertar (no autoincremental)
+  - empresa_id: string UUID inyectado por Next.js desde sesión (nunca desde el cliente)
+  - referencias entre colecciones: strings _id (no FK SQL; integridad a nivel de app)
+
+Variables de entorno requeridas:
+  Next.js (server-only):
+    MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/cuanticfo
+    N8N_BASE_URL=https://n8n.cuanticode.com/webhook/cfo
+    N8N_AUTH_SECRET=<token-secreto-compartido>
+    STORAGE_BASE_URL=https://storage.cuanticode.com   (S3/Cloudinary/R2)
+
+  n8n:
+    MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>.mongodb.net/cuanticfo
+    N8N_WEBHOOK_SECRET=<token-secreto-compartido>
+    STORAGE_BASE_URL=https://storage.cuanticode.com
+    SMTP_HOST=<servidor-smtp>
+    SMTP_USER=<correo>
+    SMTP_PASS=<clave>
 
 ==============================================================
 FLUJO 1: CREAR INGRESO
@@ -149,7 +168,7 @@ Campos del formulario:
 Respuesta exitosa (200):
 {
   "ok":          true,
-  "archivo_url": "https://supabase.storage/.../factura.pdf",
+  "archivo_url": "https://storage.cuanticode.com/.../factura.pdf",
   "sugerencias": {
     "proveedor":      "Google Cloud",
     "monto_total":    100000,
@@ -160,7 +179,7 @@ Respuesta exitosa (200):
 }
 
 Pasos internos n8n:
-  1. Guardar archivo en Supabase Storage
+  1. Guardar archivo en Object Storage (S3/Cloudinary/R2) vía HTTP node
   2. (Opcional MVP) Extraer texto con OCR básico
   3. Responder con URL y sugerencias (si hay OCR)
   4. Frontend crea el movimiento con datos pre-llenados para revisión
@@ -190,12 +209,12 @@ Respuesta exitosa (200):
 }
 
 Pasos internos n8n:
-  1. Consultar tabla correspondiente (gastos / ingresos / honorarios) por empresa + periodo
+  1. Consultar colección correspondiente (gastos / ingresos / honorarios) por empresa + periodo
   2. Agrupar por tipo_documento
   3. Calcular totales neto/IVA/exento/total
   4. Generar archivo Excel
-  5. Guardar en Supabase Storage
-  6. Insertar o actualizar registro en libros_mensuales
+  5. Guardar en Object Storage (S3/Cloudinary/R2) vía HTTP node
+  6. Insertar o actualizar documento en colección libros_mensuales (upsert por empresa_id+periodo+tipo)
   7. Responder con URL
 
 ==============================================================

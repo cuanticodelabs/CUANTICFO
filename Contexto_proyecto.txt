@@ -137,7 +137,7 @@ Frontend Next.js
     v
 Backend n8n
     |
-    | PostgreSQL / Supabase
+    | MongoDB (Atlas o self-hosted)
     v
 Base de datos financiera
     |
@@ -157,16 +157,24 @@ Automatización
 n8n
 Flujos, ETL, alertas, reportes, integraciones
 Base de datos
-Supabase/Postgres
-Fuente única de datos
+MongoDB
+Fuente única de datos (colecciones con validación JSON Schema)
 Auth
-Supabase Auth o NextAuth
-Usuarios y permisos
+NextAuth.js o JWT custom
+Usuarios y permisos (auth_user_id referenciado en colección usuarios)
 Storage
-Supabase Storage
-PDFs, XML, respaldos
+Object Storage (S3 / Cloudinary / R2)
+PDFs, XML, respaldos de documentos tributarios
 IA opcional
 OpenAI/Claude vía n8n
 Clasificación, resumen, detección de anomalías
 
-n8n puede integrarse con Webhook y Postgres para automatizar transferencia de datos y flujos ETL. (n8n) Además, sus webhooks soportan métodos de autenticación como Basic Auth, Header Auth y JWT, lo que sirve para proteger endpoints llamados desde Next.js. (n8n Docs)
+-- ACTUALIZADO v1.1 (2026-05-08): Migración de Supabase/PostgreSQL a MongoDB --
+Base de datos: MongoDB (cuanticfo DB). Colecciones definidas en cuanticfo_schema.mongo.js.
+n8n se conecta a MongoDB usando el nodo oficial MongoDB Driver (connection string MONGODB_URI).
+Aislamiento multiempresa: filtrado por empresa_id a nivel de aplicación (no RLS).
+IDs: strings UUID generados por la aplicación / n8n antes de insertar (_id: string).
+Montos: tipo Decimal128 en MongoDB (bsonType: "decimal").
+Periodo: siempre formato YYYY-MM, validado con regex en el schema.
+
+n8n puede integrarse con Webhook y MongoDB para automatizar transferencia de datos y flujos ETL. Sus webhooks soportan métodos de autenticación como Basic Auth, Header Auth y JWT, lo que sirve para proteger endpoints llamados desde Next.js. (n8n Docs)

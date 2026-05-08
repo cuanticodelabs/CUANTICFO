@@ -1,4 +1,11 @@
 6. Planeación del Backend en n8n
+-- ACTUALIZADO v1.1 (2026-05-08): Base de datos migrada de Supabase/PostgreSQL a MongoDB --
+Base de datos: MongoDB (db: cuanticfo). Colecciones: empresas, usuarios, categorias_contables,
+  proyectos, ingresos, gastos, honorarios, transferencias_bancarias, libros_mensuales,
+  impuestos_mensuales, flujo_caja, alertas, cierres_mensuales, workflow_logs.
+n8n usa el nodo MongoDB Driver para todas las operaciones de BD (variable: MONGODB_URI).
+No se usa Supabase ni PostgreSQL. No existe RLS; el aislamiento es por empresa_id en cada query.
+
 6.1 Rol de n8n
 n8n no debería ser solo “backend CRUD”. Su valor está en:
 Orquestar procesos.

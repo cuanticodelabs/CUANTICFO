@@ -1,17 +1,32 @@
 # AUDITORIA_CONSISTENCIA.md
 # Auditoría de Consistencia — CuantiCFO
-> **Fecha:** 25 de abril de 2026  
+> **Fecha original:** 25 de abril de 2026  
 > **Auditor:** Antigravity (AI Architect)  
 > **Archivos revisados:** Contexto_proyecto.txt · Planificacion_front.txt · Planificacion_back.txt · Modelo_datos.txt · Contratos_integracion.txt · bd_esquema.sql · Diseño_Front_pc.png · Diseño_Front_movil.png · Diseño_Front_preliminar.png
+>
+> **ACTUALIZACIÓN v1.1 — 2026-05-08:**
+> Base de datos migrada de Supabase/PostgreSQL a **MongoDB** (schema en `cuanticfo_schema.mongo.js`).
+> Los ítems críticos de BD marcados como pendientes en esta auditoría han sido **resueltos** en el schema MongoDB:
+> - ✅ Tabla `proyectos` → colección `proyectos` creada
+> - ✅ Tabla `honorarios` → colección `honorarios` creada
+> - ✅ Campos `honorarios_revisados`, `f29_preparado` en `cierres_mensuales` → incluidos
+> - ✅ Campo `remanente_credito` en `impuestos_mensuales` → incluido
+> - ✅ Constraint `YYYY-MM` en `periodo` → regex pattern en schema MongoDB
+> - ✅ `updated_at` en todas las colecciones → incluido
+> - ✅ `empresa_id` en `workflow_logs` → incluido
+> - ⚠️ RLS → no aplica en MongoDB; aislamiento por filtrado `empresa_id` en cada query
+> - ✅ Colección `transferencias_bancarias` → creada (resuelve módulo de transferencias)
+>
+> Leer esta auditoría en contexto histórico; el schema de referencia actual es `cuanticfo_schema.mongo.js`.
 
 ---
 
 ## 1. Resumen Ejecutivo
 
-CuantiCFO tiene una **visión clara y bien articulada**: ser un asistente CFO-first para PYMEs chilenas. La arquitectura (Next.js + n8n + Supabase/PostgreSQL) es adecuada para el MVP.
+CuantiCFO tiene una **visión clara y bien articulada**: ser un asistente CFO-first para PYMEs chilenas. La arquitectura (Next.js + n8n + MongoDB) es adecuada para el MVP.
 
 **Lo que está bien:**
-- El schema SQL es más robusto que el modelo conceptual (constraints, índices, defaults).
+- El schema MongoDB es más robusto que el modelo conceptual original (validadores JSON Schema, índices, pattern constraints).
 - Los diseños PC y móvil son coherentes entre sí y con los módulos planificados.
 - La decisión de NO automatizar la declaración F29 es correcta y está documentada.
 - La tabla `workflow_logs` existe y es un buen punto de partida para trazabilidad.
